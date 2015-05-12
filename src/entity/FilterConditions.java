@@ -3,11 +3,11 @@ package entity;
 import org.omg.CORBA.PRIVATE_MEMBER;
 
 public class FilterConditions {
-	private MyItem priceLimit;// ÕÇµø·ù
-	private MyItem price;// ÏÖ¼Û
-	private MyItem PE;// ÊÐÓ¯ÂÊ
-	private MyItem ForecastPE;// Ô¤²âÊÐÓ¯ÂÊ
-	private MyItem PB;// ÊÐ¾»ÂÊ
+	private MyItem priceLimit;// æ¶¨è·Œå¹…
+	private MyItem price;// çŽ°ä»·
+	private MyItem PE;// å¸‚ç›ˆçŽ‡
+	private MyItem ForecastPE;// é¢„æµ‹å¸‚ç›ˆçŽ‡
+	private MyItem PB;// å¸‚å‡€çŽ‡
 	private MyItem TotalEquity;
 
 	public FilterConditions() {
@@ -16,14 +16,14 @@ public class FilterConditions {
 		PE=new MyItem(">", 30,true);
 		ForecastPE=new MyItem(">", 35,true);
 		PB=new MyItem("<", 5,true);
-		TotalEquity=new MyItem("", 6,true);//ºÃÏñ×Ü¹É±¾¶¼ÊÇÒÚÒÔÉÏ
+		TotalEquity=new MyItem("", 6,true);//å¥½åƒæ€»è‚¡æœ¬éƒ½æ˜¯äº¿ä»¥ä¸Š
 	
 	};
 
 	private class MyItem {
-		private String _sign;// ·ûºÅ
-		private float _Value;// ÊýÖµ
-		private Boolean _activated;//ÊÇ·ñ¼¤»î
+		private String _sign;// ç¬¦å·
+		private float _Value;// æ•°å€¼
+		private Boolean _activated;//æ˜¯å¦æ¿€æ´»
 
 		public MyItem() {
 			_sign=">";
