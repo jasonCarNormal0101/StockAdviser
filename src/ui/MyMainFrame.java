@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-public class MainFrame {
+public class MyMainFrame {
 	private Display display;
 	protected Shell shell;
 	private Text text;
@@ -215,7 +215,7 @@ public class MainFrame {
 				new Runnable() {
 					public void run() {
 						try {
-							MainFrame window = new MainFrame();
+							MyMainFrame window = new MyMainFrame();
 							window.open();
 						} catch (Exception e) {
 							e.printStackTrace();
