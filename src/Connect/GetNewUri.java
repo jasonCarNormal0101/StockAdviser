@@ -19,6 +19,8 @@ public class GetNewUri {
 				searchUri +="%2C";
 			}
 		}
+		
+		searchUri = searchUri.replaceAll(">", "%3E");
 		searchUri = searchUri.replaceAll("<", "&lt");
 		String Content = new Sprider().sprider(searchUri);
 		int beginTokenIndex = Content.indexOf("token");
