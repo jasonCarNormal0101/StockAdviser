@@ -21,13 +21,15 @@ public class GetNewUri {
 		}
 		
 		searchUri = searchUri.replaceAll(">", "%3E");
-		searchUri = searchUri.replaceAll("<", "&lt");
+		searchUri = searchUri.replaceAll("<", "%3C");
 		String Content = new Sprider().sprider(searchUri);
+		System.out.println(searchUri);
 		int beginTokenIndex = Content.indexOf("token");
 		int endTokenIndex = Content.indexOf("\",\"concepts\"", beginTokenIndex);
 		String tokenStr = Content.substring(beginTokenIndex + 8, endTokenIndex);
 		int beginTotalIndex = Content.indexOf("\"total\"");
-		String totalStr = Content.substring(beginTotalIndex + 8, beginTotalIndex + 8 + 4);
+		int endTotalIndex = Content.indexOf("\"relatedQueries")-1;
+		String totalStr = Content.substring(beginTotalIndex + 8, endTotalIndex);
 		total = Integer.parseInt(totalStr);
 		String newUri = "http://www.iwencai.com/stockpick/cache?token=" + tokenStr + "&p=1&perpage=" + totalStr;
 		return newUri;
