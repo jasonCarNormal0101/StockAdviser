@@ -37,6 +37,7 @@ import util.MouseListenerAdapter;
 public class MainFrame {
 	private Display display;
 	protected Shell shell;
+	private FilterConditions filterConditions=new FilterConditions();
 
 	/**
 	 * @wbp.parser.entryPoint
@@ -44,6 +45,8 @@ public class MainFrame {
 	public void open() {
 		display = Display.getDefault();
 		createContents();
+		shell.open();
+		shell.layout();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -57,13 +60,14 @@ public class MainFrame {
 	protected void createContents() {
 		// TODO Auto-generated method stub
 		shell = new Shell(display, SWT.CLOSE | SWT.MIN);
+		shell.setSize(566, 470);
 
 		Composite composite = new Composite(shell, SWT.NONE);
 		composite.setFont(SWTResourceManager.getFont("Microsoft Yi Baiti", 9,
 				SWT.BOLD));
-		composite.setBounds(0, 0, 561, 433);
+		composite.setBounds(0, 0, 560, 433);
 
-		Composite composite_1 = new Composite(composite, SWT.NONE);
+		Composite composite_1 = new Composite(composite, SWT.BORDER);
 		composite_1.setBounds(0, 0, 175, 433);
 
 		Label label = new Label(composite_1, SWT.NONE);
@@ -94,33 +98,41 @@ public class MainFrame {
 		lb_totalquity.setText("总股本");
 		lb_totalquity.setBounds(35, 225, 61, 17);
 
-		Button btn_addPL = new Button(composite_1, SWT.NONE);
+		AddButton btn_addPL = new AddButton(composite_1, lb_prizelimit.getText(), filterConditions);
 		btn_addPL.setBounds(99, 49, 21, 17);
-		btn_addPL.setText("+");
 
-		Button btn_addPrize = new Button(composite_1, SWT.NONE);
-		btn_addPrize.setText("+");
+		AddButton btn_addPrize = new AddButton(composite_1, lb_prize.getText(), filterConditions);
 		btn_addPrize.setBounds(99, 82, 21, 17);
 
-		Button btn_addPE = new Button(composite_1, SWT.NONE);
-		btn_addPE.setText("+");
+		AddButton btn_addPE = new AddButton(composite_1, lb_pe.getText(), filterConditions);
 		btn_addPE.setBounds(99, 117, 21, 17);
 
-		Button btn_addFPE = new Button(composite_1, SWT.NONE);
-		btn_addFPE.setText("+");
+		AddButton btn_addFPE = new AddButton(composite_1, lb_forePE.getText(), filterConditions);
 		btn_addFPE.setBounds(99, 153, 21, 17);
 
-		Button btn_addPB = new Button(composite_1, SWT.NONE);
-		btn_addPB.setText("+");
+		AddButton btn_addPB = new AddButton(composite_1, lb_pb.getText(), filterConditions);
 		btn_addPB.setBounds(99, 189, 21, 17);
 
-		Button btn_addTQ = new Button(composite_1, SWT.NONE);
-		btn_addTQ.setText("+");
+		AddButton btn_addTQ = new AddButton(composite_1, lb_totalquity.getText(), filterConditions);
 		btn_addTQ.setBounds(99, 225, 21, 17);
 
 		Button btnGo = new Button(composite_1, SWT.NONE);
 		btnGo.setBounds(35, 297, 80, 27);
 		btnGo.setText("GO");
+		btnGo.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
 		Label label_1 = new Label(composite, SWT.NONE);
 		label_1.setFont(SWTResourceManager.getFont("Microsoft YaHei UI Light",
@@ -128,7 +140,7 @@ public class MainFrame {
 		label_1.setBounds(191, 10, 87, 27);
 		label_1.setText("过滤器");
 
-		Composite composite_2 = new Composite(composite, SWT.V_SCROLL);
+		Composite composite_2 = new Composite(composite, SWT.BORDER | SWT.V_SCROLL);
 		composite_2.setBounds(216, 43, 289, 294);
 
 		Combo combo = new Combo(composite, SWT.NONE);
@@ -145,25 +157,30 @@ public class MainFrame {
 		public Button button;
 
 		public AddButton(Composite parent, String addWhat,
-				ArrayList<Filter> filterlist) {
+				FilterConditions filterlist) {
 			button = new Button(parent, SWT.NONE);
+
+			button.setText("+");
 			button.addSelectionListener(new AddFilterListener(shell, addWhat,
 					filterlist));
+		}
+
+		public void setBounds(int x, int y, int width, int height) {
+			button.setBounds(x, y, width, height);
 		}
 
 		private class AddFilterListener extends MouseListenerAdapter {
 
 			Shell _parent;
 			String _addWhat;
-			ArrayList<Filter> _filterList;
+			FilterConditions _filterList;
 
 			public AddFilterListener(Shell parent, String addWhat,
-					ArrayList<Filter> filterlist) {
+					FilterConditions filterlist) {
 				_parent = parent;
 				_addWhat = addWhat;
 				_filterList = filterlist;
 			}
-
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
