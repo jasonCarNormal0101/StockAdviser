@@ -1,5 +1,7 @@
 package entity;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 
@@ -33,6 +35,26 @@ public class FilterConditions {
 
 	};
 
+	public ArrayList<String> toStringArray(){
+		ArrayList<String> filters=new ArrayList<String>();
+		for(int i=0;i<FilterList.size();i++){
+			Filter filter=FilterList.get(i);
+			try {
+				filters.add(URLEncoder.encode(filter.get_name(), "utf-8")+filter.get_sign()+filter.get_Value());
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(filters.size()==0)
+			try {
+				filters.add(URLEncoder.encode(PRICE,"utf-8")+">"+ 0);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}//用户不添加过滤器时给出一个所有股票都必然满足的条件
+		return filters;
+	}
 
 	public void addFilter(Filter filter){
 		FilterList.add(filter);
