@@ -2,6 +2,8 @@ package ui;
 
 import java.net.URLEncoder;
 
+import javax.swing.JTable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -18,8 +20,7 @@ public class ShowResultDlg extends Dialog {
 	private Shell parentShell;
 	private Shell _shell;
 	private FilterConditions _filterConditions;
-	private Table table;
-	private Table table_1;
+	private JTable table;
     public ShowResultDlg(Shell parent,FilterConditions filterConditions){
     	super(parent, SWT.NONE);
 		parentShell = getParent();
@@ -28,49 +29,55 @@ public class ShowResultDlg extends Dialog {
 
 		Composite composite = new Composite(_shell, SWT.V_SCROLL);
 		composite.setBounds(0, 0, 605, 403);
-		
+
 		table = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setBounds(0, 0, 583, 393);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
+		
+		TableColumn num_head = new TableColumn(table, SWT.NONE);
+		num_head.setWidth(72);
+		num_head.setText("股票代码");
+		
+		TableColumn name_head = new TableColumn(table, SWT.NONE);
+		name_head.setWidth(72);
+		name_head.setText("股票简称");
+		
+		TableColumn change_head = new TableColumn(table, SWT.NONE);
+		change_head.setWidth(60);
+		change_head.setText("涨跌幅");
+		
+		TableColumn price_head = new TableColumn(table, SWT.NONE);
+		price_head.setWidth(62);
+		price_head.setText("现价");
+		
+		TableColumn pe_head = new TableColumn(table, SWT.NONE);
+		pe_head.setWidth(70);
+		pe_head.setText("市盈率");
+		
+		TableColumn forePE_head = new TableColumn(table, SWT.NONE);
+		forePE_head.setWidth(76);
+		forePE_head.setText("预计市盈率");
+		
+		TableColumn pb_head = new TableColumn(table, SWT.NONE);
+		pb_head.setWidth(70);
+		pb_head.setText("市净率");
+		
+		TableColumn equity_head = new TableColumn(table, SWT.NONE);
+		equity_head.setWidth(94);
+		equity_head.setText("总股本");
+		
 		TableColumn tableColumn = new TableColumn(table, SWT.NONE);
-		tableColumn.setWidth(72);
-		tableColumn.setText("股票代码");
-		
-		TableColumn tableColumn_1 = new TableColumn(table, SWT.NONE);
-		tableColumn_1.setWidth(72);
-		tableColumn_1.setText("股票简称");
-		
-		TableColumn tableColumn_2 = new TableColumn(table, SWT.NONE);
-		tableColumn_2.setWidth(60);
-		tableColumn_2.setText("涨跌幅");
-		
-		TableColumn tableColumn_3 = new TableColumn(table, SWT.NONE);
-		tableColumn_3.setWidth(62);
-		tableColumn_3.setText("现价");
-		
-		TableColumn tableColumn_4 = new TableColumn(table, SWT.NONE);
-		tableColumn_4.setWidth(70);
-		tableColumn_4.setText("市盈率");
-		
-		TableColumn tableColumn_5 = new TableColumn(table, SWT.NONE);
-		tableColumn_5.setWidth(76);
-		tableColumn_5.setText("预计市盈率");
-		
-		TableColumn tableColumn_6 = new TableColumn(table, SWT.NONE);
-		tableColumn_6.setWidth(70);
-		tableColumn_6.setText("市净率");
-		
-		TableColumn tableColumn_7 = new TableColumn(table, SWT.NONE);
-		tableColumn_7.setWidth(94);
-		tableColumn_7.setText("总股本");
-		
-		table_1 = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION);
-		table_1.setBounds(10, 38, 85, 45);
-		table_1.setHeaderVisible(true);
-		table_1.setLinesVisible(true);
+		tableColumn.setWidth(100);
+		tableColumn.setText("New Column");
 		create();
+		
+		Object[][] data={
+				{"00607.SZ","abc","5.203","16.58","17590.61","147.59","13.37"},		
+				{"00607.SZ","abc","5.203","16.58","17590.61","147.59","13.37"},
+		};
+		table = new JTable(Info,Names);
     }
 	private void create() {
 		// TODO Auto-generated method stub
