@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="lib/org.eclipse.core.databinding.property_1.4.200.v20140214-0004.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.core.runtime_3.10.0.v20140318-2214.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
