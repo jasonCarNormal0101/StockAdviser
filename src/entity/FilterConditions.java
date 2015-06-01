@@ -8,6 +8,7 @@ import java.util.concurrent.locks.Condition;
 import org.omg.CORBA.PRIVATE_MEMBER;
 
 import sun.awt.geom.AreaOp.AddOp;
+import sun.misc.Sort;
 
 public class FilterConditions {
 	public static final String PRICELIMIT = "涨跌幅";
@@ -26,12 +27,12 @@ public class FilterConditions {
 	
 	public FilterConditions() {
 		
-		addFilter(new Filter(PRICELIMIT, "<", 0));
-		addFilter(new Filter(PRICE, "<", 30 ));
-		addFilter(new Filter(PE, ">", 30));
-		addFilter(new Filter(FORECASTPE, ">", 35));
-		addFilter(new Filter(PB, "<", 5));
-		addFilter(new Filter(TOTALEQUITY, "<", 6));// 好像总股本都是亿以上
+//		addFilter(new Filter(PRICELIMIT, "<", 0));
+//		addFilter(new Filter(PRICE, "<", 30 ));
+//		addFilter(new Filter(PE, ">", 30));
+//		addFilter(new Filter(FORECASTPE, ">", 35));
+//		addFilter(new Filter(PB, "<", 5));
+//		addFilter(new Filter(TOTALEQUITY, "<", 6));// 好像总股本都是亿以上
 
 	};
 

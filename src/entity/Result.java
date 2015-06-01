@@ -13,20 +13,20 @@ public class Result {
 		stocks.add(s);
 	}
 
-	public Filter split(String str) {
-		String string = new String();
-		char[] c = str.toCharArray();
-		for (int i = 1; i < c.length; i++) {
-			string = string + c[i];
-		}
-		Filter filter = new Filter(String.valueOf(c[0]),
-				Float.parseFloat(string));
-		// String string = filter.get_sign();
-		// float num = filter.get_Value();
-		// System.out.print(string);
-		// System.out.print(num);
-		return filter;
-	}
+//	public Filter split(String str) {
+//		String string = new String();
+//		char[] c = str.toCharArray();
+//		for (int i = 1; i < c.length; i++) {
+//			string = string + c[i];
+//		}
+//		Filter filter = new Filter(String.valueOf(c[0]),
+//				Float.parseFloat(string));
+//		// String string = filter.get_sign();
+//		// float num = filter.get_Value();
+//		// System.out.print(string);
+//		// System.out.print(num);
+//		return filter;
+//	}
 
 	// 对List中的信息按照num排序
 

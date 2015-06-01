@@ -8,7 +8,13 @@ public class Share {
 	private String pe;
 	private String predictPe;
 	private String netRate;
+	private String[] datas = null;
 	
+	public String getdata(int index){
+		datas = new String[]{Integer.toString(shareCode),shareShortDes,upAndDownRange
+		,price,pe,predictPe,netRate};
+		return datas[index];
+	}
 	public int getShareCode() {
 		return shareCode;
 	}

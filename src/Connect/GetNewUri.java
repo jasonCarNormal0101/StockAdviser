@@ -1,21 +1,23 @@
 package Connect;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 
 public class GetNewUri {
 	private int total;
-	private String[] conditions = null;
+	private ArrayList<String> conditions = null;
 	
-	public GetNewUri(String[] conditions){
+	public GetNewUri(ArrayList<String> conditions){
 		this.conditions = conditions;
 	}
 	 
-	public String getNewUri(){
+	public String getNewUri() throws IOException{
 		String searchUri = "http://www.iwencai.com/stockpick/search?typed=1&preParams=&ts=1&f=1&qs=1&selfsectsn=&querytype=&searchfilter=&tid=stockpick&w=";
-		for(int i = 0 ; i < conditions.length ; i++){
-			searchUri += conditions[i];
-			if(i != conditions.length -1){
+		for(int i = 0 ; i < conditions.size() ; i++){
+			searchUri += conditions.get(i);
+			if(i != conditions.size() -1){
 				searchUri +="%2C";
 			}
 		}

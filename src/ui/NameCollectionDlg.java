@@ -40,30 +40,22 @@ import util.RefreshTask;
 import entity.Filter;
 import entity.FilterConditions;
 
-public class AddFilterDlg extends Dialog {
+public class NameCollectionDlg extends Dialog {
 
 	private Shell parentShell;
 	private Shell shell;
-	private FilterConditions _filterList;
-	private String _addWhat;
 	private Text value;
-	private Filter result;
+	private String result;
 	private Button btnOK;
 	private Button btnCancel;
-	private RefreshMethod _refreshMethod;
 	public final String TEXT_DEFAULTVALUE="格式为:比较符加数值";
 
-	public AddFilterDlg(Shell parent,String addWhat,
-			FilterConditions filterList,RefreshMethod refreshMethod) {
+	public NameCollectionDlg(Shell parent) {
 		// TODO Auto-generated constructor stub
 		super(parent, SWT.NONE);
 		parentShell = getParent();
-		_filterList = filterList;
-		_addWhat = addWhat;
-		_refreshMethod=refreshMethod;
-		shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		this.setText(addWhat);
-		System.out.println(addWhat);
+		shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL| SWT.APPLICATION_MODAL);
+		this.setText("命名收藏");
 		create();
 	}
 
@@ -92,7 +84,7 @@ public class AddFilterDlg extends Dialog {
 
 		Label lblNewLabel = new Label(composite, SWT.NONE);
 		lblNewLabel.setBounds(60, 70, 61, 17);
-		lblNewLabel.setText(_addWhat+":");
+		lblNewLabel.setText("命名为：");
 
 		value = new Text(composite, SWT.BORDER);
 		value.setBounds(127, 64, 122, 23);
@@ -119,32 +111,24 @@ public class AddFilterDlg extends Dialog {
 		btnOK.setText("确定");
 		btnOK.addSelectionListener(new SelectionListener() {
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
 				System.out.println(value.getText());
 				if (!value.getText().isEmpty()) {
-					try {
-						result = split(value.getText());
-						result.set_name(_addWhat);
-						_filterList.addFilter(result);
-						
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						//非法输入处理
-					}
-					
-				}
+						result = value.getText();					
+				
 //				RefreshTask.addRefreshTask(shell.getDisplay(), _refreshMethod);
 				shell.close();
 				shell.dispose();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
 			}
 
 		});
@@ -170,31 +154,31 @@ public class AddFilterDlg extends Dialog {
 		});
 	}
 
-	public Text getValue() {
-		return value;
+	public String getValue() {
+		return result;
 	}
 
-	public Filter split(String str) throws IOException {
-		String string = new String();
-		char[] c = str.toCharArray();
-		for (int i = 1; i < c.length; i++) {
-			string = string + c[i];
-		}
-		if (c[0] == '<' || c[0] == '>') {
-			if (isNum(string)) {
-				Filter filter = new Filter(_addWhat,String.valueOf(c[0]),
-						Float.parseFloat(string));
-				// String string = filter.get_sign();
-				// float num = filter.get_Value();
-				// System.out.print(string);
-				// System.out.print(num);
-				return filter;
-			}
-		}
-		else throw new IOException("illegal input");
-		return null;
-
-	}
+//	public Filter split(String str) throws IOException {
+//		String string = new String();
+//		char[] c = str.toCharArray();
+//		for (int i = 1; i < c.length; i++) {
+//			string = string + c[i];
+//		}
+//		if (c[0] == '<' || c[0] == '>') {
+//			if (isNum(string)) {
+//				Filter filter = new Filter(_addWhat,String.valueOf(c[0]),
+//						Float.parseFloat(string));
+//				// String string = filter.get_sign();
+//				// float num = filter.get_Value();
+//				// System.out.print(string);
+//				// System.out.print(num);
+//				return filter;
+//			}
+//		}
+//		else throw new IOException("illegal input");
+//		return null;
+//
+//	}
 
 	public static boolean isNum(String str) {
 		for (int i = 0; i < str.length(); i++) { // 循环遍历字符串

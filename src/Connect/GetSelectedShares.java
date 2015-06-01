@@ -20,7 +20,7 @@ import org.json.JSONObject;
 public class GetSelectedShares {
 	
 
-	public ArrayList<Share> getSelectedShares(String[] conditions){
+	public ArrayList<Share> getSelectedShares(ArrayList<String> conditions) throws IOException{
 
 	GetNewUri getNewUri = new GetNewUri(conditions);
     Util util = new Util();

@@ -2,9 +2,8 @@ package ui;
 
 import java.net.URLEncoder;
 
-import javax.swing.JTable;
-
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -20,7 +19,7 @@ public class ShowResultDlg extends Dialog {
 	private Shell parentShell;
 	private Shell _shell;
 	private FilterConditions _filterConditions;
-	private JTable table;
+	private Table table;
     public ShowResultDlg(Shell parent,FilterConditions filterConditions){
     	super(parent, SWT.NONE);
 		parentShell = getParent();
@@ -77,7 +76,11 @@ public class ShowResultDlg extends Dialog {
 				{"00607.SZ","abc","5.203","16.58","17590.61","147.59","13.37"},		
 				{"00607.SZ","abc","5.203","16.58","17590.61","147.59","13.37"},
 		};
-		table = new JTable(Info,Names);
+
+
+		for (int i = 0; i < table.getColumnCount(); i++) {
+			table.getColumn(i).pack();
+		}
     }
 	private void create() {
 		// TODO Auto-generated method stub
