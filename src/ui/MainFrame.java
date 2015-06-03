@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import Connect.GetNewUri;
 
+import com.sun.swing.internal.plaf.basic.resources.basic;
 import com.sun.xml.internal.ws.wsdl.writer.document.OpenAtts;
 
 import entity.CollectionTable;
@@ -35,6 +36,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -57,6 +59,7 @@ public class MainFrame {
 	private Composite composite;
 	public FilterConditions filterConditions = new FilterConditions();
 	private CollectionBlock collectionBlock;
+	private CollectButton collectButton;
 
 	/**
 	 * @wbp.parser.entryPoint
@@ -133,7 +136,6 @@ public class MainFrame {
 		AddButton btn_addPE = new AddButton(composite_1, lb_pe.getText(),
 				filterConditions);
 		btn_addPE.setBounds(99, 117, 21, 17);
-
 		AddButton btn_addFPE = new AddButton(composite_1, lb_forePE.getText(),
 				filterConditions);
 		btn_addFPE.setBounds(99, 153, 21, 17);
@@ -178,23 +180,54 @@ public class MainFrame {
 		// 12, SWT.BOLD));
 		// label_1.setBounds(191, 10, 87, 27);
 		// label_1.setText("过滤器");
-		ScrolledComposite scrolledComposite=new ScrolledComposite(composite, SWT.V_SCROLL|SWT.BORDER);
-		scrolledComposite.setBounds(216, 65,300, 294);
+		ScrolledComposite scrolledComposite = new ScrolledComposite(composite,
+				SWT.V_SCROLL | SWT.BORDER);
+		scrolledComposite.setBounds(216, 65, 300, 294);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
 		collectionBlock = new CollectionBlock(composite, SWT.NONE);
 		collectionBlock.setBounds(370, 20, 150, 40);
 		filterBlock = new FilterBlock(scrolledComposite);
-		filterBlock.setBounds(0, 0,300, 294);
+		filterBlock.setBounds(0, 0, 300, 294);
 		scrolledComposite.setContent(filterBlock);
 
-		Button button = new Button(composite, SWT.NONE);
-		button.setBounds(438, 366, 80, 27);
-		button.setText("收藏");
-		button.addSelectionListener(new CollectFilterListener());
+		collectButton = new CollectButton(composite, SWT.NONE);
+		collectButton.setBounds(438, 366, 80, 27);
+		collectButton.toCollectButton();
 
-		
-		
+	}
+
+	class CollectButton {
+		Button button;
+		UnCollectFilterListener unCollectFilterListener;
+		CollectFilterListener collectFilterListener;
+
+		public CollectButton(Composite composite, int sytle) {
+			button = new Button(composite, sytle);
+			unCollectFilterListener = new UnCollectFilterListener();
+			collectFilterListener = new CollectFilterListener();
+		}
+
+		public void setBounds(int i, int j, int k, int l) {
+			// TODO Auto-generated method stub
+			button.setBounds(i, j, k, l);
+		}
+
+		private void toCollectButton() {
+			collectionBlock.combo.select(0);
+			button.setText("收藏");
+			button.removeSelectionListener(collectFilterListener);
+			button.removeSelectionListener(unCollectFilterListener);
+			button.addSelectionListener(collectFilterListener);
+
+		}
+
+		private void toUnCollectButton() {
+			button.setText("取消收藏");
+			button.removeSelectionListener(collectFilterListener);
+			button.removeSelectionListener(unCollectFilterListener);
+			button.addSelectionListener(unCollectFilterListener);
+		}
 	}
 
 	private class CollectionBlock extends Composite implements RefreshMethod {
@@ -217,11 +250,16 @@ public class MainFrame {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
 					// TODO Auto-generated method stub
-				
-					String selection=combo.getItem(combo.getSelectionIndex());
+
+					String selection = combo.getItem(combo.getSelectionIndex());
 					System.out.println(selection);
-					filterConditions=new CollectionTable().getFilterConditions(selection);
-					new RefreshTask().addRefreshTask(display, filterBlock);
+					FilterConditions temp = new CollectionTable()
+							.getFilterConditions(selection);
+					if (temp != null) {
+						filterConditions = temp;
+					}
+					RefreshTask.addRefreshTask(display, filterBlock);
+					collectButton.toUnCollectButton();
 				}
 
 				@Override
@@ -232,17 +270,30 @@ public class MainFrame {
 			});
 
 		}
-
-		public void setItems(String[] items) {
-			_items = items;
+		public void setComboWithIndex(int index){
+			combo.select(index);
+		}
+		public void setComboWithName(String itemname){
+			String[] items=combo.getItems();
+			int targetIndex=-1;
+			for (int i = 0; i < items.length; i++) {
+				if (items[i].equals(itemname)) {
+					targetIndex=i;
+					break;
+				}
+			}
+			if (targetIndex!=-1) {
+				combo.select(targetIndex);
+			}
 		}
 
 		@Override
 		public void refresh() {
 			// TODO Auto-generated method stub
+			System.out.println("begin to refresh");
 			_items = new CollectionTable().getNameArray();
 			for (int i = 0; i < _items.length; i++) {
-				System.out.println(_items[i]);
+				System.out.println("refresh:" + _items[i]);
 			}
 			combo.setItems(_items);
 		}
@@ -255,18 +306,31 @@ public class MainFrame {
 
 	public class FilterBlock extends Composite implements RefreshMethod {
 		private ArrayList<FilterComponent> rdList;
+		private Composite context;
 		public Group group;
 
 		public FilterBlock(Composite parent) {
-			super(parent, SWT.V_SCROLL);
-			setLayout(new  FillLayout());
+			super(parent, SWT.NONE);
+			this.setLayout(new FillLayout());
+			final ScrolledComposite sc = new ScrolledComposite(this,
+					SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			context = new Composite(sc, SWT.NONE);
+			sc.setContent(context);
+			// Color red = parent.getDisplay().getSystemColor(SWT.COLOR_RED);
+			// context.setBackground(red);
+			GridLayout layout = new GridLayout();
+			layout.numColumns = 1;
+			context.setLayout(layout);
+			// Button b1 = new Button(context, SWT.PUSH);
+			// b1.setText("first button");
+			createBlock(context);
+			context.setSize(context.computeSize(SWT.DEFAULT, SWT.DEFAULT));// 关键点3
 			// this.rdList = new ArrayList<FilterComponent>();
-			//FIXME  test Init
+			// FIXME test Init
 			InitToTwelveFilter();
-			createBlock();
-			rdList=new ArrayList<FilterComponent>();
-		}
 
+			rdList = new ArrayList<FilterComponent>();
+		}
 
 		public void updateFilterComponent(FilterConditions ls) {
 			RefreshTask.addRefreshTask(display, this);
@@ -282,37 +346,53 @@ public class MainFrame {
 		@Override
 		public void refresh() {
 			// checkNDepose();
+			int Sizebefore;
+			int Sizeafter;
 			for (int i = 0; i < rdList.size(); i++) {
 				rdList.get(i).dispose();
 			}
+			Sizebefore = rdList.size();
+			rdList = new ArrayList<FilterComponent>();
+//			System.out.println("filterCondition refresh:"
+//					+ filterConditions.getFilters().size());
 			for (int i = 0; i < filterConditions.getFilters().size(); ++i) {
-				FilterComponent fc = new FilterComponent(group,SWT.V_SCROLL,
-						filterConditions.getFilters().get(i));
-				fc.setBounds(10, 30 + 30 * i, 340, 30);
+				FilterComponent fc = new FilterComponent(group, SWT.NONE,
+						filterConditions, filterConditions.getFilters().get(i),
+						filterBlock);
+				// System.out.println(i);
+				// fc.setBounds(10, 30 + 30 * i, 340, 30);
 
 				rdList.add(fc);
 			}
+			Sizeafter = rdList.size();
+			if (Sizeafter == Sizebefore) {
+				context.setSize(0, 0);
+			}
+			System.out.println("filterCondition rdList:" + rdList.size());
+			// 关键点3 NOTE:setSize在容器大小没变的情况下是不会重新计算的，容易导致不刷新
+			context.setSize(context.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		}
 
-		private void createBlock() {
+		private void createBlock(Composite context) {
 			// TODO Auto-generated method stub
-//			style = filterConditions.getFilters().size() < 10 ? SWT.BORDER
-//					:SWT.BORDER| SWT.V_SCROLL;
+			// style = filterConditions.getFilters().size() < 10 ? SWT.BORDER
+			// :SWT.BORDER| SWT.V_SCROLL;
 			// group.setText("");
-		
-			group = new Group(this, SWT.NONE);
+
+			group = new Group(context, SWT.NONE);
 			group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			group.setLayout(new GridLayout(1, false));
 			group.setText("过滤器");
 			group.setFont(SWTResourceManager.getFont(
-					"Microsoft YaHei UI Light", 17, SWT.BOLD));		
-			group.setBounds(0, 0, 300, 300);
+					"Microsoft YaHei UI Light", 17, SWT.BOLD));
+			// group.setBounds(0, 0, 300, 300);
 			// System.out.println(group.toString());
 			// System.out.println(filterBlock.getBounds().toString());
 
 		}
 
 	}
+
 	public void InitToTwelveFilter() {
 		filterConditions.addFilter(new Filter("涨跌幅", ">", 3));
 		filterConditions.addFilter(new Filter("涨跌幅", "<", 5));
@@ -327,6 +407,7 @@ public class MainFrame {
 		filterConditions.addFilter(new Filter("总股本", ">", 0));
 		filterConditions.addFilter(new Filter("总股本", "<", 10));
 	}
+
 	private class AddButton {
 		public Button button;
 
@@ -334,8 +415,7 @@ public class MainFrame {
 				FilterConditions filterlist) {
 			button = new Button(parent, SWT.NONE);
 			button.setText("+");
-			button.addSelectionListener(new AddFilterListener(shell, addWhat,
-					filterlist));
+			button.addSelectionListener(new AddFilterListener(shell, addWhat));
 		}
 
 		public void setBounds(int x, int y, int width, int height) {
@@ -346,22 +426,22 @@ public class MainFrame {
 
 			Shell _parent;
 			String _addWhat;
-			FilterConditions _filterList;
 
-			public AddFilterListener(Shell parent, String addWhat,
-					FilterConditions filterlist) {
+			public AddFilterListener(Shell parent, String addWhat) {
 				_parent = parent;
 				_addWhat = addWhat;
-				_filterList = filterlist;
 			}
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
 				AddFilterDlg dlg = new AddFilterDlg(_parent, _addWhat,
-						_filterList, filterBlock);
+						filterConditions, filterBlock);
 				dlg.open();
-				RefreshTask.addRefreshTask(shell.getDisplay(), filterBlock);
+				if (dlg.getValue() != null) {
+					collectButton.toCollectButton();
+					RefreshTask.addRefreshTask(shell.getDisplay(), filterBlock);
+				}
 			}
 
 		}
@@ -381,8 +461,34 @@ public class MainFrame {
 			dlg.open();
 			String text = dlg.getValue();
 			if (text != null) {
-			 saveCollectionAndRefresh(text, filterConditions);
+				saveCollectionAndRefresh(text, filterConditions);
 			}
+		}
+
+	}
+
+	private class UnCollectFilterListener extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			// TODO Auto-generated method stub
+			new CollectionTable().removeCollection(collectionBlock.combo
+					.getText());
+			updateCollectionBlocktoBlank();
+			clearFilterBlock();
+			System.out.println(collectionBlock.combo.getText());
+		}
+
+		private void updateCollectionBlocktoBlank() {
+			collectionBlock.combo.select(0);
+			// 直接用refreshTask会出现未知阻塞
+			// RefreshTask.addRefreshTask(display, collectionBlock);
+			collectionBlock.refresh();
+		}
+
+		private void clearFilterBlock() {
+			// TODO Auto-generated method stub
+			filterConditions.getFilters().clear();
+			RefreshTask.addRefreshTask(display, filterBlock);
 		}
 
 	}
@@ -415,6 +521,7 @@ public class MainFrame {
 		// TODO Auto-generated method stub
 		CollectionTable collections = new CollectionTable();
 		collections.saveCollection(text, filterConditions);
-		RefreshTask.addRefreshTask(display, collectionBlock);
+		collectionBlock.refresh();
+		collectionBlock.setComboWithName(text);
 	}
 }

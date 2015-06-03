@@ -46,10 +46,11 @@ public class AddFilterDlg extends Dialog {
 	private Shell shell;
 	private FilterConditions _filterList;
 	private String _addWhat;
-	private Text value;
+	private Text valueText;
 	private Filter result;
 	private Button btnOK;
 	private Button btnCancel;
+	private String value;
 	private RefreshMethod _refreshMethod;
 	public final String TEXT_DEFAULTVALUE="格式为:比较符加数值";
 
@@ -94,15 +95,15 @@ public class AddFilterDlg extends Dialog {
 		lblNewLabel.setBounds(60, 70, 61, 17);
 		lblNewLabel.setText(_addWhat+":");
 
-		value = new Text(composite, SWT.BORDER);
-		value.setBounds(127, 64, 122, 23);
-		value.setToolTipText("TEXT_DEFAULTVALUE");
-		value.addFocusListener(new FocusListener() {
+		valueText = new Text(composite, SWT.BORDER);
+		valueText.setBounds(127, 64, 122, 23);
+		valueText.setToolTipText("TEXT_DEFAULTVALUE");
+		valueText.addFocusListener(new FocusListener() {
 			
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				// TODO Auto-generated method stub
-			      value.clearSelection();
+				valueText.clearSelection();
 			}
 			
 			@Override
@@ -111,7 +112,7 @@ public class AddFilterDlg extends Dialog {
 //				if(value.getText()==TEXT_DEFAULTVALUE){
 //					value.setText("");
 //				}
-				value.selectAll();
+				valueText.selectAll();
 			}
 		});
 		btnOK = new Button(composite, SWT.NONE);
@@ -128,12 +129,14 @@ public class AddFilterDlg extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
-				System.out.println(value.getText());
-				if (!value.getText().isEmpty()) {
+//				System.out.println(valueText.getText());
+				if (!valueText.getText().isEmpty()) {
 					try {
-						result = split(value.getText());
+						result = split(valueText.getText());
 						result.set_name(_addWhat);
 						_filterList.addFilter(result);
+						value=valueText.getText();
+						System.out.println("addDlg"+_filterList.getFilters().size());
 						
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -157,7 +160,7 @@ public class AddFilterDlg extends Dialog {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
-
+				value=null;
 			}
 
 			@Override
@@ -170,7 +173,7 @@ public class AddFilterDlg extends Dialog {
 		});
 	}
 
-	public Text getValue() {
+	public String getValue() {
 		return value;
 	}
 

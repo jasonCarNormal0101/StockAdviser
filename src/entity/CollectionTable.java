@@ -24,13 +24,14 @@ public class CollectionTable {
 
 	public void saveCollection(String text, FilterConditions filterConditions) {
 		// TODO Auto-generated method stub
-
+		if(text.equals(" "))
+			return;
 		try {
 			JSONObject collections = getHistory();
 
 			ArrayList<Filter> filterList = filterConditions.getFilters();
 
-			collections.put(text, filterToJO(filterList));
+			collections.put(text, filtersToJO(filterList));
 
 			write(collections.toString());
 		} catch (JSONException | IOException e) {
@@ -38,6 +39,18 @@ public class CollectionTable {
 			System.out.println("saveCollection:因格式错误忽略了一条收藏");
 		}
 
+	}
+	public void removeCollection(String text){
+		JSONObject collections =getHistory();
+		collections.remove(text);
+		try {
+			write(collections.toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+			System.out.println("collectionTable写入失败");
+		}
+		
 	}
 
 	private void write(String context) throws IOException {
@@ -77,7 +90,7 @@ public class CollectionTable {
 		return collections;
 	}
 
-	private JSONObject filterToJO(ArrayList<Filter> filterList)
+	private JSONObject filtersToJO(ArrayList<Filter> filterList)
 			throws JSONException {
 		// TODO Auto-generated method stub
 		JSONObject rtnOJ = new JSONObject();
@@ -102,14 +115,15 @@ public class CollectionTable {
 		// TODO Auto-generated method stub
 		JSONObject history = getHistory();
 
-		String[] collectionNames = new String[history.length()];
+		String[] collectionNames = new String[history.length()+1];
 		Iterator key = history.keys();
-		int counter = 0;
+		int counter = 1;
 		while (key.hasNext()) {
 			String temp = key.next().toString();
 			collectionNames[counter] = temp;
 			counter++;
 		}
+		collectionNames[0]=" ";//作为空白项
 		return collectionNames;
 
 	}
@@ -143,6 +157,9 @@ public class CollectionTable {
 	public FilterConditions getFilterConditions(String selection) {
 		// TODO Auto-generated method stub
 		FilterConditions colletion = new FilterConditions();
+		if (selection.equals(" ")) {
+			return null;
+		}
 		try {
 			JSONObject colletionJO = getHistory().getJSONObject(selection);
 			Iterator<?> key = colletionJO.keys();

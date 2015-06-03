@@ -12,6 +12,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import org.eclipse.swt.widgets.Display;
+
+import util.RefreshMethod;
+import util.RefreshTask;
 import Connect.GetSelectedShares;
 import Connect.Share;
 import entity.FilterConditions;
@@ -21,47 +25,91 @@ import java.awt.GridLayout;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class TableDemo extends JDialog {
+public class TableDemo extends JDialog implements RefreshMethod {
 
 	/**
 	 * TableDemo is just like SimpleTableDemo, except that it uses a custom
 	 * TableModel.
 	 */
-
+	private GetSelectedShares getSelectedShares;
 	private boolean DEBUG = true;
 	private FilterConditions _filterConditions;
+	private JScrollPane scrollPane;
+	private JTable table;
 	ArrayList<Share> _result = new ArrayList<Share>();
 
 	public TableDemo(FilterConditions filterConditions) {
 		super();
 		_filterConditions = filterConditions;
 
-		GetSelectedShares getSelectedShares = new GetSelectedShares();
-
-		try {
-			_result = getSelectedShares.getSelectedShares(filterConditions
-					.toStringArray());
-		} catch (IOException e) {
-			Share failedShare=new Share();
-			failedShare.setNetRate("");
-			failedShare.setPe("");
-			failedShare.setPrice("");
-			failedShare.setShareCode(0);
-			failedShare.setUpAndDownRange("");
-			failedShare.setPredictPe("无网络");
-		    ArrayList<Share> failedUIList=new ArrayList<Share>();
-		    failedUIList.add(failedShare);
-            _result=failedUIList;
-		}
-		JTable table = new JTable(new MyTableModel(_result));
+		getSelectedShares = new GetSelectedShares();
+		createThread();
+		Share failedShare=new Share();
+		failedShare.setNetRate("");
+		failedShare.setPe("");
+		failedShare.setPrice("获取数据中，请稍等");
+		failedShare.setShareCode(0);
+		failedShare.setUpAndDownRange("");
+		failedShare.setPredictPe(" ");
+	    ArrayList<Share> failedUIList=new ArrayList<Share>();
+	    failedUIList.add(failedShare);
+        _result=failedUIList;
+		table = new JTable(new MyTableModel(_result));
 		table.setPreferredScrollableViewportSize(new Dimension(500, 400));
 
 		// Create the scroll pane and add the table to it.
-		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane = new JScrollPane(table);
 
 		// Add the scroll pane to this panel.
 		add(scrollPane);
+		
 
+	}
+	private  void createThread(){
+		Thread th=new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					_result = getSelectedShares.getSelectedShares(_filterConditions
+							.toStringArray());
+					RefreshTask.addRefreshTask(Display.getDefault(), TableDemo.this);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					System.err.println("无网络");
+					Share failedShare=new Share();
+					failedShare.setNetRate("");
+					failedShare.setPe("");
+					failedShare.setPrice("");
+					failedShare.setShareCode(0);
+					failedShare.setUpAndDownRange("");
+					failedShare.setPredictPe("无网络 ");
+				    ArrayList<Share> failedUIList=new ArrayList<Share>();
+				    failedUIList.add(failedShare);
+		            _result=failedUIList;
+		            RefreshTask.addRefreshTask(Display.getDefault(), TableDemo.this);
+				}
+			}
+		});
+		th.start();
+		
+		
+	}
+	
+	@Override
+	public void refresh() {
+//		System.err.println("refreshing+"+_result.get(0).getdata(5).toString());
+		// TODO Auto-generated method stub
+		table = new JTable(new MyTableModel(_result));
+		table.removeAll();
+		table.setPreferredScrollableViewportSize(new Dimension(500, 400));
+		// Create the scroll pane and add the table to it.
+		scrollPane = new JScrollPane(table);
+
+		// Add the scroll pane to this panel.
+		add(scrollPane);
+		
 	}
 
 	class MyTableModel extends AbstractTableModel {
@@ -166,6 +214,7 @@ public class TableDemo extends JDialog {
 		dlg.setVisible(true);
 	}
 
+	
 	// public static void main(String[] args) {
 	// //Schedule a job for the event-dispatching thread:
 	// //creating and showing this application's GUI.

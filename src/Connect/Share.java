@@ -13,6 +13,9 @@ public class Share {
 	public String getdata(int index){
 		datas = new String[]{Integer.toString(shareCode),shareShortDes,upAndDownRange
 		,price,pe,predictPe,netRate};
+		if(index==0){
+			return "";
+		}
 		return datas[index];
 	}
 	public int getShareCode() {
