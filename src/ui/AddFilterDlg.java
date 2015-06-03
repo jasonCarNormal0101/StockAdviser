@@ -3,16 +3,6 @@ package ui;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
-
-
-
-
-
-
-
-
-
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;

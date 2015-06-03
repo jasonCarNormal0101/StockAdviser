@@ -42,18 +42,23 @@ public class TableDemo extends JDialog implements RefreshMethod {
 		super();
 		_filterConditions = filterConditions;
 
-		getSelectedShares = new GetSelectedShares();
-		createThread();
-		Share failedShare=new Share();
-		failedShare.setNetRate("");
-		failedShare.setPe("");
-		failedShare.setPrice("获取数据中，请稍等");
-		failedShare.setShareCode(0);
-		failedShare.setUpAndDownRange("");
-		failedShare.setPredictPe(" ");
-	    ArrayList<Share> failedUIList=new ArrayList<Share>();
-	    failedUIList.add(failedShare);
-        _result=failedUIList;
+		GetSelectedShares getSelectedShares = new GetSelectedShares();
+
+		try {
+			_result = getSelectedShares.getSelectedShares(filterConditions
+					.toStringArray());
+		} catch (IOException e) {
+			Share failedShare=new Share();
+			failedShare.setNetRate("");
+			failedShare.setPe("");
+			failedShare.setPrice("");
+			failedShare.setShareCode(0);
+			failedShare.setUpAndDownRange("");
+			failedShare.setPredictPe("无网络");
+		    ArrayList<Share> failedUIList=new ArrayList<Share>();
+		    failedUIList.add(failedShare);
+            _result=failedUIList;
+		}
 		table = new JTable(new MyTableModel(_result));
 		table.setPreferredScrollableViewportSize(new Dimension(500, 400));
 
@@ -114,7 +119,7 @@ public class TableDemo extends JDialog implements RefreshMethod {
 
 	class MyTableModel extends AbstractTableModel {
 		private String[] columnNames = { "股票代码", "股票简称", "涨跌幅", "现价", "市盈率",
-				"预计市盈率", "市净率" };
+				"预计市盈率", "总股本" };
 		private ArrayList<Share> myresult=new ArrayList<Share>();
 
 		// private Object[][] data ={};

@@ -41,13 +41,15 @@ public class GetSelectedShares {
 			for(int i = 0 ; i < jsonArray.length(); i++){
 				JSONArray jsonArray1 = jsonArray.getJSONArray(i);
 				Share share = new Share();
+//				System.out.println("result:"+jsonArray1.toString());
 				for(int j = 0 ; j < jsonArray1.length() ; j++ ){
 					share.setShareCode(util.shareCodeTransfer(jsonArray1.getString(0)));
+					System.out.println("result:"+util.shareCodeTransfer(jsonArray1.getString(0)));
 					share.setShareShortDes(jsonArray1.getString(1));
-					share.setUpAndDownRange(jsonArray1.getString(2));
-					share.setPrice(jsonArray1.getString(3));
-					share.setPe(jsonArray1.getString(4));
-					share.setPredictPe(jsonArray1.getString(5));
+					share.setUpAndDownRange(jsonArray1.getString(3));
+					share.setPrice(jsonArray1.getString(2));
+					share.setPe(jsonArray1.getString(5));
+					share.setPredictPe(jsonArray1.getString(4));
 					share.setNetRate(jsonArray1.getString(6));
 				}
 				shares.add(share);
