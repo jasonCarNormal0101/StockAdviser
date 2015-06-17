@@ -6,24 +6,24 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-public class SingletonDB {
+public class BaseDB {
 	private static final String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
 	private static final String PROTOCOL = "jdbc:derby:";
 	private static final String DB_NAME = "data/stockdb";
 	
-	private static SingletonDB singletoDBInstance = null;
+	private static BaseDB singletoDBInstance = null;
 	
 	private static Connection connection;
 	private static Statement statement;
 	
-	private SingletonDB(){
+	private BaseDB(){
 		loadDriver();
 		statement = connect();
 	}
 	
-	public static SingletonDB Instance(){
+	public static BaseDB Instance(){
 		if(singletoDBInstance == null){
-			singletoDBInstance = new SingletonDB();
+			singletoDBInstance = new BaseDB();
 		}
 		return singletoDBInstance;
 	}

@@ -25,9 +25,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import controller.CrawStockXueQiu.GetThread;
+import controller.CatchXueQiuTodb.GetThread;
 
-public class CrawStocksTongHuaShun extends CrawStocks{
+public class CatchTongHuaShunTodb extends CatchStocksTodb{
 	public static final String CHARSET = "utf-8";
 	public static final String GET_PARAM_URL = 
 			"http://www.iwencai.com/stockpick/search"
@@ -44,7 +44,7 @@ public class CrawStocksTongHuaShun extends CrawStocks{
 	private final String tableName = "tonghuashun";
 	private String sourceName = "同花顺";
 	
-	public CrawStocksTongHuaShun(){
+	public CatchTongHuaShunTodb(){
 		super();
 		
 //		execute();
@@ -171,7 +171,7 @@ public class CrawStocksTongHuaShun extends CrawStocks{
 
 	public static void main(String[] args) throws Exception {
 		String str1;
-		CrawStocksTongHuaShun ths = new CrawStocksTongHuaShun();
+		CatchTongHuaShunTodb ths = new CatchTongHuaShunTodb();
 		ths.update();
 //		ths.execute();
 		String str = ths.getDataArray().toString();

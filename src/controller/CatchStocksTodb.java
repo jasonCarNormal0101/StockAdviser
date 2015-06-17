@@ -25,12 +25,12 @@ import org.json.JSONArray;
 
 //import controller.GetThread;
 
-public abstract class CrawStocks {
+public abstract class CatchStocksTodb {
 	protected static DefaultHttpClient httpClient;
 	
 //	protected String[] urlList;
 	
-	public CrawStocks(){
+	public CatchStocksTodb(){
 //		this.urlList = urlList;
 		
 		createHttpClient();

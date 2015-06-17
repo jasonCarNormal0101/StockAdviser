@@ -36,11 +36,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import controller.CollectConditionCtrl;
-import controller.CrawStockXueQiu;
-import controller.CrawStocks;
-import controller.CrawStocksTongHuaShun;
-import controller.SQLdb;
+import controller.CollectionSL;
+import controller.CatchXueQiuTodb;
+import controller.CatchStocksTodb;
+import controller.CatchTongHuaShunTodb;
+import controller.SqlDB;
 
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Combo;
@@ -113,17 +113,17 @@ public class NewShowResultDlg extends Dialog {
 	private Label btnClose;
 	private Label btnMin;
 	
-	private ArrayList<SQLdb> sqldbs;
-	private SQLdb sqldb;
+	private ArrayList<SqlDB> sqldbs;
+	private SqlDB sqldb;
 	private ArrayList<String> sourceNames;
 	
-	private CollectConditionCtrl collectCondCtrl;
+	private CollectionSL collectCondCtrl;
 	
 //	private ArrayList<Condition> conditionValue;
 	
 //	private ArrayList<CollectCondition> collCompArray;
 
-	 public NewShowResultDlg(Shell parent, FilterConditions filterConditions,SQLdb sqLdb) {
+	 public NewShowResultDlg(Shell parent, FilterConditions filterConditions,SqlDB sqLdb) {
 		super(parent, SWT.NONE);
 		parentShell = getParent();
 		_filterConditions = filterConditions;
@@ -182,17 +182,17 @@ public class NewShowResultDlg extends Dialog {
 	
 	public void initSql(){
 		if(sqldbs == null){
-			sqldbs = new ArrayList<SQLdb>();
+			sqldbs = new ArrayList<SqlDB>();
 		}
 		if(sourceNames == null){
 			sourceNames = new ArrayList<String>();
 		}
 		
-		CrawStocksTongHuaShun ths = new CrawStocksTongHuaShun();
-		CrawStockXueQiu xueqiu = new CrawStockXueQiu();
+		CatchTongHuaShunTodb ths = new CatchTongHuaShunTodb();
+		CatchXueQiuTodb xueqiu = new CatchXueQiuTodb();
 		
-		sqldbs.add(new SQLdb(ths));
-		sqldbs.add(new SQLdb(xueqiu));
+		sqldbs.add(new SqlDB(ths));
+		sqldbs.add(new SqlDB(xueqiu));
 		
 		sourceNames.add(ths.getSourceName());
 		sourceNames.add(xueqiu.getSourceName());
@@ -301,7 +301,7 @@ public class NewShowResultDlg extends Dialog {
 		topComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
 		topComposite.setLayout(new FormLayout());
 
-		collectCondCtrl = new CollectConditionCtrl();
+		collectCondCtrl = new CollectionSL();
 		
 //		collCompArray = new ArrayList<CollectCondition>();
 		

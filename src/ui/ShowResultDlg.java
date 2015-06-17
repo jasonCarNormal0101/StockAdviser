@@ -37,10 +37,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import controller.CollectConditionCtrl;
-import controller.CrawStockXueQiu;
-import controller.CrawStocksTongHuaShun;
-import controller.SQLdb;
+import controller.CollectionSL;
+import controller.CatchXueQiuTodb;
+import controller.CatchTongHuaShunTodb;
+import controller.SqlDB;
 
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
@@ -52,7 +52,7 @@ public class ShowResultDlg extends Dialog {
 	private Table stockListTable;
 	private Shell parentShell;
 	private Shell _shell;
-	private SQLdb sqldb;
+	private SqlDB sqldb;
 	private Composite stockListComposite;
 	private Composite optionComposite;
 	private Composite topComposite;
@@ -82,7 +82,7 @@ public class ShowResultDlg extends Dialog {
 	private ArrayList<TableEditor> minEditorItem;
 	private ArrayList<TableEditor> maxEditortem;
 //	private ArrayList<Condition> textItem;
-	private CollectConditionCtrl collectCondCtrl;
+	private CollectionSL collectCondCtrl;
 //	private ArrayList<CollectCondition> collCompArray;
 	private static final String[] HEADER = new String[] { "序号", "股票代码", "股票简称",
 			"涨跌幅(%)", "现价(元)", "市盈率(pe)", "动态市盈率", "市净率" };
@@ -92,7 +92,7 @@ public class ShowResultDlg extends Dialog {
 			new String[]{"priceChangeRatio", "curPrice", "pe", "dynamicPE", "pb"};
 	private static final String[] CHOICE_CONDITION = new String[] { "涨跌幅(%)",
 		"现价(元)", "市盈率(pe)", "动态市盈率", "市净率" };
-	public ShowResultDlg(Shell parent, FilterConditions filterConditions,SQLdb sqLdb) {
+	public ShowResultDlg(Shell parent, FilterConditions filterConditions,SqlDB sqLdb) {
 		super(parent, SWT.NONE);
 		parentShell = getParent();
 		_filterConditions = filterConditions;
@@ -229,8 +229,8 @@ public class ShowResultDlg extends Dialog {
 			sourceNames = new ArrayList<String>();
 		}
 		
-		CrawStocksTongHuaShun ths = new CrawStocksTongHuaShun();
-		CrawStockXueQiu xueqiu = new CrawStockXueQiu();
+		CatchTongHuaShunTodb ths = new CatchTongHuaShunTodb();
+		CatchXueQiuTodb xueqiu = new CatchXueQiuTodb();
 		
 //		sqldbs.add(new SQLdb(ths));
 //		sqldbs.add(new SQLdb(xueqiu));

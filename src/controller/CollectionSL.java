@@ -8,14 +8,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CollectConditionCtrl {
+public class CollectionSL {
 	private static final String PATH = "data/collection_condition.json";
 	//保存收藏条件的最大数
 	private static final int MAX_COLLECTIONS_LEN = 8;
 	
 	private JSONArray conditionArray;
 	
-	public CollectConditionCtrl(){
+	public CollectionSL(){
 		String str = IORW.read(PATH);
 		System.out.println("sssssssssssss    " + str);
 		if(str.isEmpty()){
@@ -89,7 +89,7 @@ public class CollectConditionCtrl {
 	}
 	
 	public static void main(String[] argv){
-		CollectConditionCtrl cc = new CollectConditionCtrl();
+		CollectionSL cc = new CollectionSL();
 		JSONArray ja = cc.getConditionArray();
 		System.out.println(ja.toString());
 	}

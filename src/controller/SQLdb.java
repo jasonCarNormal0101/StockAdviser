@@ -16,13 +16,13 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class SQLdb {
+public class SqlDB {
 	
 	public static final String[] TABLE_COL_NAME = 
 			new String[]{"priceChangeRatio", "curPrice", "pe", "dynamicPE", "pb"};
 	
-	private CrawStocks crawStocks;
-	private SingletonDB singletonDB;
+	private CatchStocksTodb crawStocks;
+	private BaseDB singletonDB;
 	private Connection connection;
 	private Statement statement;
 	private JSONArray stockArray;
@@ -32,8 +32,8 @@ public class SQLdb {
 	//数据来源列表
 //	private ArrayList<CrawStocks> dataList;
 	
-	public SQLdb(CrawStocks crawStocks){
-		singletonDB = SingletonDB.Instance();
+	public SqlDB(CatchStocksTodb crawStocks){
+		singletonDB = BaseDB.Instance();
 		statement = singletonDB.getStatement();
 		connection = singletonDB.getConnection();
 		this.crawStocks = crawStocks;
@@ -260,13 +260,13 @@ public class SQLdb {
 	public static void main(String[] argv) 
 			throws ClientProtocolException, IOException, SQLException{
 //		CrawStocksTongHuaShun ths = new CrawStocksTongHuaShun();
-		CrawStockXueQiu xq = new CrawStockXueQiu();
+		CatchXueQiuTodb xq = new CatchXueQiuTodb();
 		System.out.println("xueqiu");
 //		SQLdb thsSql = new SQLdb(ths);
 //		thsSql.update();
 //		thsSql.execute();
 		
-		SQLdb xqSql = new SQLdb(xq);
+		SqlDB xqSql = new SqlDB(xq);
 		xqSql.update();
 	}
 }

@@ -20,9 +20,9 @@ import Connect.GetNewUri;
 import com.sun.swing.internal.plaf.basic.resources.basic;
 import com.sun.xml.internal.ws.wsdl.writer.document.OpenAtts;
 
-import controller.CrawStockXueQiu;
-import controller.CrawStocksTongHuaShun;
-import controller.SQLdb;
+import controller.CatchXueQiuTodb;
+import controller.CatchTongHuaShunTodb;
+import controller.SqlDB;
 import entity.CollectionTable;
 import entity.Filter;
 import entity.FilterConditions;
@@ -69,8 +69,8 @@ public class MainFrame {
 	public FilterConditions filterConditions = new FilterConditions();
 	private CollectionBlock collectionBlock;
 	private CollectButton collectButton;
-	private SQLdb sqldb;
-	private ArrayList<SQLdb> sqldbs;
+	private SqlDB sqldb;
+	private ArrayList<SqlDB> sqldbs;
 	private static final Image REFRESH = 
 			new Image(Display.getDefault(), "icons/refresh.png");
 	/**
@@ -90,17 +90,17 @@ public class MainFrame {
 
 	public void initSql() {
 		if (sqldbs == null) {
-			sqldbs = new ArrayList<SQLdb>();
+			sqldbs = new ArrayList<SqlDB>();
 		}
 		if (sourceNames == null) {
 			sourceNames = new ArrayList<String>();
 		}
 
-		CrawStocksTongHuaShun ths = new CrawStocksTongHuaShun();
-		CrawStockXueQiu xueqiu = new CrawStockXueQiu();
+		CatchTongHuaShunTodb ths = new CatchTongHuaShunTodb();
+		CatchXueQiuTodb xueqiu = new CatchXueQiuTodb();
 
-		sqldbs.add(new SQLdb(ths));
-		sqldbs.add(new SQLdb(xueqiu));
+		sqldbs.add(new SqlDB(ths));
+		sqldbs.add(new SqlDB(xueqiu));
 
 		sourceNames.add(ths.getSourceName());
 		sourceNames.add(xueqiu.getSourceName());
