@@ -116,7 +116,7 @@ public class NameCollectionDlg extends Dialog {
 			public void widgetSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
 				System.out.println(value.getText());
-				if (!value.getText().isEmpty()) {
+				if (!value.getText().isEmpty()||value.getText().equals(" ")){
 						result = value.getText();					
 				
 //				RefreshTask.addRefreshTask(shell.getDisplay(), _refreshMethod);

@@ -26,6 +26,10 @@
 	<classpathentry kind="lib" path="lib/jna-4.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jna-platform-4.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/json.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/StockSelect"/>
+	<classpathentry kind="lib" path="lib/derby.jar"/>
+	<classpathentry kind="lib" path="lib/derbytools.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
+	<classpathentry kind="lib" path="lib/org.json.jar"/>
+	<classpathentry kind="lib" path="lib/htttp/org.apache.commons.lang_2.4.0.v201005080502.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -20,7 +20,7 @@ import Connect.GetNewUri;
 import com.sun.swing.internal.plaf.basic.resources.basic;
 import com.sun.xml.internal.ws.wsdl.writer.document.OpenAtts;
 
-import controller.CrawStockFromXueQiu;
+import controller.CrawStockXueQiu;
 import controller.CrawStocksTongHuaShun;
 import controller.SQLdb;
 import entity.CollectionTable;
@@ -43,7 +43,9 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
@@ -69,7 +71,8 @@ public class MainFrame {
 	private CollectButton collectButton;
 	private SQLdb sqldb;
 	private ArrayList<SQLdb> sqldbs;
-
+	private static final Image REFRESH = 
+			new Image(Display.getDefault(), "icons/refresh.png");
 	/**
 	 * @wbp.parser.entryPoint
 	 */
@@ -94,7 +97,7 @@ public class MainFrame {
 		}
 
 		CrawStocksTongHuaShun ths = new CrawStocksTongHuaShun();
-		CrawStockFromXueQiu xueqiu = new CrawStockFromXueQiu();
+		CrawStockXueQiu xueqiu = new CrawStockXueQiu();
 
 		sqldbs.add(new SQLdb(ths));
 		sqldbs.add(new SQLdb(xueqiu));
@@ -158,12 +161,12 @@ public class MainFrame {
 		lb_pb.setText("市净率");
 		lb_pb.setBounds(35, 189, 61, 17);
 
-		Label lb_totalquity = new Label(composite_1, SWT.NONE);
-		lb_totalquity.setText("总股本");
-		lb_totalquity.setBounds(35, 225, 61, 17);
+		// Label lb_totalquity = new Label(composite_1, SWT.NONE);
+		// lb_totalquity.setText("总股本");
+		// lb_totalquity.setBounds(35, 225, 61, 17);
 
-		AddButton btn_addPL = new AddButton(composite_1, lb_prizelimit.getText(),
-				filterConditions);
+		AddButton btn_addPL = new AddButton(composite_1,
+				lb_prizelimit.getText(), filterConditions);
 		btn_addPL.setBounds(99, 49, 21, 17);
 
 		AddButton btn_addPrize = new AddButton(composite_1, lb_prize.getText(),
@@ -181,9 +184,9 @@ public class MainFrame {
 				filterConditions);
 		btn_addPB.setBounds(99, 189, 21, 17);
 
-//		AddButton btn_addTQ = new AddButton(composite_1,
-//				lb_totalquity.getText(), filterConditions);
-//		btn_addTQ.setBounds(99, 225, 21, 17);
+		// AddButton btn_addTQ = new AddButton(composite_1,
+		// lb_totalquity.getText(), filterConditions);
+		// btn_addTQ.setBounds(99, 225, 21, 17);
 
 		Button btnGo = new Button(composite_1, SWT.NONE);
 		btnGo.setBounds(35, 297, 80, 27);
@@ -192,7 +195,7 @@ public class MainFrame {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				ShowResultDlg dlg = new ShowResultDlg(getShell(),
+				NewShowResultDlg dlg = new NewShowResultDlg(getShell(),
 						filterConditions, sqldb);
 				dlg.open();
 
@@ -227,6 +230,33 @@ public class MainFrame {
 		sourceNames.toArray(arr);
 		combo.setItems(arr);
 		combo.select(0);
+		
+		Label btnRefresh = new Label(composite_1, SWT.NONE);
+		btnRefresh.setBounds(123, 302, 48, 17);
+		btnRefresh.setToolTipText("刷新");
+//		btnRefresh.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+		FormData fd_btnRefresh = new FormData();
+		btnRefresh.setLayoutData(fd_btnRefresh);
+		btnRefresh.setText("刷新");
+		btnRefresh.setImage(REFRESH);
+		btnRefresh.setVisible(true);
+		btnRefresh.addMouseTrackListener(new RefreshListerner());
+		btnRefresh.addMouseListener(new MouseListenerAdapt() {
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				Thread td =  new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						sqldb.update();
+						System.out.println(("update finished"));
+					}
+				});
+				td.start();
+			}
+		});
 		combo.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -321,8 +351,13 @@ public class MainFrame {
 
 					String selection = combo.getItem(combo.getSelectionIndex());
 					System.out.println(selection);
-					FilterConditions temp = new CollectionTable()
-							.getFilterConditions(selection);
+					FilterConditions temp;
+					if (selection.equals(" ")) {
+						temp = new FilterConditions();
+					} else {
+						temp = new CollectionTable()
+								.getFilterConditions(selection);
+					}
 					if (temp != null) {
 						filterConditions = temp;
 					}
@@ -397,7 +432,6 @@ public class MainFrame {
 			context.setSize(context.computeSize(SWT.DEFAULT, SWT.DEFAULT));// 关键点3
 			// this.rdList = new ArrayList<FilterComponent>();
 			// FIXME test Init
-
 
 			rdList = new ArrayList<FilterComponent>();
 		}
