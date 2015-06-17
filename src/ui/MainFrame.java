@@ -397,7 +397,7 @@ public class MainFrame {
 			context.setSize(context.computeSize(SWT.DEFAULT, SWT.DEFAULT));// 关键点3
 			// this.rdList = new ArrayList<FilterComponent>();
 			// FIXME test Init
-			InitToTwelveFilter();
+
 
 			rdList = new ArrayList<FilterComponent>();
 		}
