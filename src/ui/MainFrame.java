@@ -1,6 +1,8 @@
 package ui;
 
 import java.awt.event.MouseAdapter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -18,6 +20,9 @@ import Connect.GetNewUri;
 import com.sun.swing.internal.plaf.basic.resources.basic;
 import com.sun.xml.internal.ws.wsdl.writer.document.OpenAtts;
 
+import controller.CrawStockFromXueQiu;
+import controller.CrawStocksTongHuaShun;
+import controller.SQLdb;
 import entity.CollectionTable;
 import entity.Filter;
 import entity.FilterConditions;
@@ -28,6 +33,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DragDetectEvent;
 import org.eclipse.swt.events.DragDetectListener;
@@ -57,9 +63,12 @@ public class MainFrame {
 	protected Shell shell;
 	private FilterBlock filterBlock;
 	private Composite composite;
+	private ArrayList<String> sourceNames;
 	public FilterConditions filterConditions = new FilterConditions();
 	private CollectionBlock collectionBlock;
 	private CollectButton collectButton;
+	private SQLdb sqldb;
+	private ArrayList<SQLdb> sqldbs;
 
 	/**
 	 * @wbp.parser.entryPoint
@@ -67,9 +76,37 @@ public class MainFrame {
 
 	public MainFrame() {
 		display = Display.getDefault();
+		initSql();
+		if (sqldb.getCount() == 0) {
+			sqldb.update();
+		}
 		createContents();
 		shell.open();
 		shell.layout();
+	}
+
+	public void initSql() {
+		if (sqldbs == null) {
+			sqldbs = new ArrayList<SQLdb>();
+		}
+		if (sourceNames == null) {
+			sourceNames = new ArrayList<String>();
+		}
+
+		CrawStocksTongHuaShun ths = new CrawStocksTongHuaShun();
+		CrawStockFromXueQiu xueqiu = new CrawStockFromXueQiu();
+
+		sqldbs.add(new SQLdb(ths));
+		sqldbs.add(new SQLdb(xueqiu));
+
+		sourceNames.add(ths.getSourceName());
+		sourceNames.add(xueqiu.getSourceName());
+
+		sqldb = sqldbs.get(0);
+	}
+
+	public void createTableItem() throws SQLException {
+		ResultSet rs = sqldb.query();
 	}
 
 	public void open() {
@@ -125,8 +162,8 @@ public class MainFrame {
 		lb_totalquity.setText("总股本");
 		lb_totalquity.setBounds(35, 225, 61, 17);
 
-		AddButton btn_addPL = new AddButton(composite_1,
-				lb_prizelimit.getText(), filterConditions);
+		AddButton btn_addPL = new AddButton(composite_1, lb_prizelimit.getText(),
+				filterConditions);
 		btn_addPL.setBounds(99, 49, 21, 17);
 
 		AddButton btn_addPrize = new AddButton(composite_1, lb_prize.getText(),
@@ -144,9 +181,9 @@ public class MainFrame {
 				filterConditions);
 		btn_addPB.setBounds(99, 189, 21, 17);
 
-		AddButton btn_addTQ = new AddButton(composite_1,
-				lb_totalquity.getText(), filterConditions);
-		btn_addTQ.setBounds(99, 225, 21, 17);
+//		AddButton btn_addTQ = new AddButton(composite_1,
+//				lb_totalquity.getText(), filterConditions);
+//		btn_addTQ.setBounds(99, 225, 21, 17);
 
 		Button btnGo = new Button(composite_1, SWT.NONE);
 		btnGo.setBounds(35, 297, 80, 27);
@@ -155,17 +192,48 @@ public class MainFrame {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				// GetNewUri getNewUri = new GetNewUri(new
-				// String[]{"pe<30","pe>20"});
+				ShowResultDlg dlg = new ShowResultDlg(getShell(),
+						filterConditions, sqldb);
+				dlg.open();
+
+				// // TODO Auto-generated method stub
+				// // GetNewUri getNewUri = new GetNewUri(new
+				// // String[]{"pe<30","pe>20"});
+				// //
+				// // System.out.println("test:"+getNewUri.getNewUri());
+				// // TableDemo tableDemo=new TableDemo();
 				//
-				// System.out.println("test:"+getNewUri.getNewUri());
-				// TableDemo tableDemo=new TableDemo();
-				javax.swing.SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						TableDemo.createAndShowGUI(filterConditions);
-					}
-				});
+				//
+				// javax.swing.SwingUtilities.invokeLater(new Runnable() {
+				// public void run() {
+				// TableDemo.createAndShowGUI(filterConditions);
+				// }
+				// });
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		final Combo combo = new Combo(composite_1, SWT.READ_ONLY);
+		combo.setBackground(SWTResourceManager
+				.getColor(SWT.COLOR_WIDGET_BACKGROUND));
+		combo.setToolTipText("选取数据来源");
+		combo.setBounds(77, 10, 88, 25);
+		String[] arr = new String[sourceNames.size()];
+		sourceNames.toArray(arr);
+		combo.setItems(arr);
+		combo.select(0);
+		combo.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				int index = combo.getSelectionIndex();
+				sqldb = sqldbs.get(index);
 			}
 
 			@Override
@@ -270,19 +338,21 @@ public class MainFrame {
 			});
 
 		}
-		public void setComboWithIndex(int index){
+
+		public void setComboWithIndex(int index) {
 			combo.select(index);
 		}
-		public void setComboWithName(String itemname){
-			String[] items=combo.getItems();
-			int targetIndex=-1;
+
+		public void setComboWithName(String itemname) {
+			String[] items = combo.getItems();
+			int targetIndex = -1;
 			for (int i = 0; i < items.length; i++) {
 				if (items[i].equals(itemname)) {
-					targetIndex=i;
+					targetIndex = i;
 					break;
 				}
 			}
-			if (targetIndex!=-1) {
+			if (targetIndex != -1) {
 				combo.select(targetIndex);
 			}
 		}
@@ -353,8 +423,8 @@ public class MainFrame {
 			}
 			Sizebefore = rdList.size();
 			rdList = new ArrayList<FilterComponent>();
-//			System.out.println("filterCondition refresh:"
-//					+ filterConditions.getFilters().size());
+			// System.out.println("filterCondition refresh:"
+			// + filterConditions.getFilters().size());
 			for (int i = 0; i < filterConditions.getFilters().size(); ++i) {
 				FilterComponent fc = new FilterComponent(group, SWT.NONE,
 						filterConditions, filterConditions.getFilters().get(i),
@@ -516,12 +586,22 @@ public class MainFrame {
 		return shell;
 	}
 
+	String _text;
+
 	public void saveCollectionAndRefresh(String text,
 			FilterConditions filterList) {
 		// TODO Auto-generated method stub
+		_text = text;
 		CollectionTable collections = new CollectionTable();
 		collections.saveCollection(text, filterConditions);
-		collectionBlock.refresh();
-		collectionBlock.setComboWithName(text);
+		display.asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				collectionBlock.refresh();
+				collectionBlock.setComboWithName(_text);
+			}
+		});
 	}
 }

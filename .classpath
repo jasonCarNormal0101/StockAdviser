@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="lib/jna-4.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jna-platform-4.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/json.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/StockSelect"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
