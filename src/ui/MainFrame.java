@@ -22,7 +22,7 @@ import com.sun.xml.internal.ws.wsdl.writer.document.OpenAtts;
 
 import controller.CatchXueQiuTodb;
 import controller.CatchTongHuaShunTodb;
-import controller.SqlDB;
+import controller.SQLdb;
 import entity.CollectionTable;
 import entity.Filter;
 import entity.FilterConditions;
@@ -69,8 +69,8 @@ public class MainFrame {
 	public FilterConditions filterConditions = new FilterConditions();
 	private CollectionBlock collectionBlock;
 	private CollectButton collectButton;
-	private SqlDB sqldb;
-	private ArrayList<SqlDB> sqldbs;
+	private SQLdb SQLdb;
+	private ArrayList<SQLdb> SQLdbs;
 	private static final Image REFRESH = 
 			new Image(Display.getDefault(), "icons/refresh.png");
 	/**
@@ -80,8 +80,8 @@ public class MainFrame {
 	public MainFrame() {
 		display = Display.getDefault();
 		initSql();
-		if (sqldb.getCount() == 0) {
-			sqldb.update();
+		if (SQLdb.getCount() == 0) {
+			SQLdb.update();
 		}
 		createContents();
 		shell.open();
@@ -89,8 +89,8 @@ public class MainFrame {
 	}
 
 	public void initSql() {
-		if (sqldbs == null) {
-			sqldbs = new ArrayList<SqlDB>();
+		if (SQLdbs == null) {
+			SQLdbs = new ArrayList<SQLdb>();
 		}
 		if (sourceNames == null) {
 			sourceNames = new ArrayList<String>();
@@ -99,17 +99,17 @@ public class MainFrame {
 		CatchTongHuaShunTodb ths = new CatchTongHuaShunTodb();
 		CatchXueQiuTodb xueqiu = new CatchXueQiuTodb();
 
-		sqldbs.add(new SqlDB(ths));
-		sqldbs.add(new SqlDB(xueqiu));
+		SQLdbs.add(new SQLdb(ths));
+		SQLdbs.add(new SQLdb(xueqiu));
 
 		sourceNames.add(ths.getSourceName());
 		sourceNames.add(xueqiu.getSourceName());
 
-		sqldb = sqldbs.get(0);
+		SQLdb = SQLdbs.get(0);
 	}
 
 	public void createTableItem() throws SQLException {
-		ResultSet rs = sqldb.query();
+		ResultSet rs = SQLdb.query();
 	}
 
 	public void open() {
@@ -196,7 +196,7 @@ public class MainFrame {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				NewShowResultDlg dlg = new NewShowResultDlg(getShell(),
-						filterConditions, sqldb);
+						filterConditions, SQLdb);
 				dlg.open();
 
 				// // TODO Auto-generated method stub
@@ -250,7 +250,7 @@ public class MainFrame {
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
-						sqldb.update();
+						SQLdb.update();
 						System.out.println(("update finished"));
 					}
 				});
@@ -263,7 +263,7 @@ public class MainFrame {
 			public void widgetSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
 				int index = combo.getSelectionIndex();
-				sqldb = sqldbs.get(index);
+				SQLdb = SQLdbs.get(index);
 			}
 
 			@Override

@@ -16,7 +16,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class SqlDB {
+public class SQLdb{
 	
 	public static final String[] TABLE_COL_NAME = 
 			new String[]{"priceChangeRatio", "curPrice", "pe", "dynamicPE", "pb"};
@@ -32,7 +32,7 @@ public class SqlDB {
 	//数据来源列表
 //	private ArrayList<CrawStocks> dataList;
 	
-	public SqlDB(CatchStocksTodb crawStocks){
+	public SQLdb(CatchStocksTodb crawStocks){
 		singletonDB = BaseDB.Instance();
 		statement = singletonDB.getStatement();
 		connection = singletonDB.getConnection();
@@ -266,7 +266,7 @@ public class SqlDB {
 //		thsSql.update();
 //		thsSql.execute();
 		
-		SqlDB xqSql = new SqlDB(xq);
+		SQLdb xqSql = new SQLdb(xq);
 		xqSql.update();
 	}
 }

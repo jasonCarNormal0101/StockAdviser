@@ -40,7 +40,7 @@ import controller.CollectionSL;
 import controller.CatchXueQiuTodb;
 import controller.CatchStocksTodb;
 import controller.CatchTongHuaShunTodb;
-import controller.SqlDB;
+import controller.SQLdb;
 
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Combo;
@@ -113,8 +113,8 @@ public class NewShowResultDlg extends Dialog {
 	private Label btnClose;
 	private Label btnMin;
 	
-	private ArrayList<SqlDB> sqldbs;
-	private SqlDB sqldb;
+	private ArrayList<SQLdb> SQLdbs;
+	private SQLdb SQLdb;
 	private ArrayList<String> sourceNames;
 	
 	private CollectionSL collectCondCtrl;
@@ -123,12 +123,12 @@ public class NewShowResultDlg extends Dialog {
 	
 //	private ArrayList<CollectCondition> collCompArray;
 
-	 public NewShowResultDlg(Shell parent, FilterConditions filterConditions,SqlDB sqLdb) {
+	 public NewShowResultDlg(Shell parent, FilterConditions filterConditions,SQLdb SQLdb) {
 		super(parent, SWT.NONE);
 		parentShell = getParent();
 		_filterConditions = filterConditions;
 		
-		this.sqldb=sqLdb;
+		this.SQLdb=SQLdb;
 		
 	
 
@@ -154,14 +154,14 @@ public class NewShowResultDlg extends Dialog {
 	public void open() {
 		Display display = Display.getDefault();
 		
-//		sqldb = new SQLdb();//连接数据库
+//		SQLdb = new SQLdb();//连接数据库
 		
 		//创建开始界面
 //		Shell startShell = new StartShell(Display.getDefault());
 //		startShell.open();
 //		initSql();
-//		if (sqldb.getCount() == 0) {
-//			sqldb.update();
+//		if (SQLdb.getCount() == 0) {
+//			SQLdb.update();
 //		}
 		//数据加载完成，注销开始界面
 //		startShell.dispose();
@@ -181,8 +181,8 @@ public class NewShowResultDlg extends Dialog {
 	}
 	
 	public void initSql(){
-		if(sqldbs == null){
-			sqldbs = new ArrayList<SqlDB>();
+		if(SQLdbs == null){
+			SQLdbs = new ArrayList<SQLdb>();
 		}
 		if(sourceNames == null){
 			sourceNames = new ArrayList<String>();
@@ -191,13 +191,13 @@ public class NewShowResultDlg extends Dialog {
 		CatchTongHuaShunTodb ths = new CatchTongHuaShunTodb();
 		CatchXueQiuTodb xueqiu = new CatchXueQiuTodb();
 		
-		sqldbs.add(new SqlDB(ths));
-		sqldbs.add(new SqlDB(xueqiu));
+		SQLdbs.add(new SQLdb(ths));
+		SQLdbs.add(new SQLdb(xueqiu));
 		
 		sourceNames.add(ths.getSourceName());
 		sourceNames.add(xueqiu.getSourceName());
 		
-		sqldb = sqldbs.get(0);
+		SQLdb = SQLdbs.get(0);
 	}
 	
 	public void createIcon(){
@@ -223,7 +223,7 @@ public class NewShowResultDlg extends Dialog {
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
-						sqldb.update();
+						SQLdb.update();
 						System.out.println(("update finished"));
 					}
 				});
@@ -386,7 +386,7 @@ public class NewShowResultDlg extends Dialog {
 			public void widgetSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
 				int index = combo.getSelectionIndex();
-				sqldb = sqldbs.get(index);
+				SQLdb = SQLdbs.get(index);
 				try {
 					setExtreValue();
 				} catch (SQLException e) {
@@ -604,7 +604,7 @@ public class NewShowResultDlg extends Dialog {
 	}
 	
 	public void createTableItem() throws SQLException{
-		ResultSet rs = sqldb.query();
+		ResultSet rs = SQLdb.query();
 	}
 	
 	public void clearTableItem(){
@@ -617,7 +617,7 @@ public class NewShowResultDlg extends Dialog {
 //				Text mintext = (Text) textItem.get(i).getMin();
 //				Text maxtext = (Text) textItem.get(i).getMax();
 				
-				ResultSet rs = sqldb.queryExtre(TABLE_COL_NAME[i]);
+				ResultSet rs = SQLdb.queryExtre(TABLE_COL_NAME[i]);
 				String min = rs.getString(1);
 				String max = rs.getString(2);
 				TableItem tim = conditionItem.get(i);
@@ -691,7 +691,7 @@ public class NewShowResultDlg extends Dialog {
 				querySql = "(" + querySql + ")" ;
 			}
 			
-			rs = sqldb.query(querySql);
+			rs = SQLdb.query(querySql);
 			System.out.println("My sql query is:"+querySql);
 			return rs;
 		}

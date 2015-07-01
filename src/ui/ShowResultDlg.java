@@ -40,7 +40,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import controller.CollectionSL;
 import controller.CatchXueQiuTodb;
 import controller.CatchTongHuaShunTodb;
-import controller.SqlDB;
+import controller.SQLdb;
 
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
@@ -52,7 +52,7 @@ public class ShowResultDlg extends Dialog {
 	private Table stockListTable;
 	private Shell parentShell;
 	private Shell _shell;
-	private SqlDB sqldb;
+	private SQLdb SQLdb;
 	private Composite stockListComposite;
 	private Composite optionComposite;
 	private Composite topComposite;
@@ -76,7 +76,7 @@ public class ShowResultDlg extends Dialog {
 	private Composite selectComposite;
 	private Composite selectHeadComposite;
 	private ArrayList<TableItem> conditionItem;
-//	private ArrayList<SQLdb> sqldbs;
+//	private ArrayList<SQLdb> SQLdbs;
 	private ArrayList<String> sourceNames;
 	private Table conditionTable;
 	private ArrayList<TableEditor> minEditorItem;
@@ -92,12 +92,12 @@ public class ShowResultDlg extends Dialog {
 			new String[]{"priceChangeRatio", "curPrice", "pe", "dynamicPE", "pb"};
 	private static final String[] CHOICE_CONDITION = new String[] { "涨跌幅(%)",
 		"现价(元)", "市盈率(pe)", "动态市盈率", "市净率" };
-	public ShowResultDlg(Shell parent, FilterConditions filterConditions,SqlDB sqLdb) {
+	public ShowResultDlg(Shell parent, FilterConditions filterConditions,SQLdb SQLdb) {
 		super(parent, SWT.NONE);
 		parentShell = getParent();
 		_filterConditions = filterConditions;
 		
-		this.sqldb=sqLdb;
+		this.SQLdb=SQLdb;
 		
 	
 
@@ -190,7 +190,7 @@ public class ShowResultDlg extends Dialog {
 		createStockListComposite();
 	}
 	public void createTableItem() throws SQLException{
-		ResultSet rs = sqldb.query();
+		ResultSet rs = SQLdb.query();
 	}
 	public void createOptionComposite() {
 		optionComposite = new Composite(topComposite, SWT.NONE);
@@ -222,8 +222,8 @@ public class ShowResultDlg extends Dialog {
 		operation();
 	}
 	public void initSql(){
-//		if(sqldbs == null){
-//			sqldbs = new ArrayList<SQLdb>();
+//		if(SQLdbs == null){
+//			SQLdbs = new ArrayList<SQLdb>();
 //		}
 		if(sourceNames == null){
 			sourceNames = new ArrayList<String>();
@@ -232,13 +232,13 @@ public class ShowResultDlg extends Dialog {
 		CatchTongHuaShunTodb ths = new CatchTongHuaShunTodb();
 		CatchXueQiuTodb xueqiu = new CatchXueQiuTodb();
 		
-//		sqldbs.add(new SQLdb(ths));
-//		sqldbs.add(new SQLdb(xueqiu));
+//		SQLdbs.add(new SQLdb(ths));
+//		SQLdbs.add(new SQLdb(xueqiu));
 		
 		sourceNames.add(ths.getSourceName());
 		sourceNames.add(xueqiu.getSourceName());
 		
-//		sqldb = sqldbs.get(0);
+//		SQLdb = SQLdbs.get(0);
 	}
 	public void createSelectHeadComposite(){
 		selectHeadComposite = new Composite(selectComposite, SWT.NONE);
@@ -269,7 +269,7 @@ public class ShowResultDlg extends Dialog {
 			public void widgetSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
 				int index = combo.getSelectionIndex();
-//				sqldb = sqldbs.get(index);
+//				SQLdb = SQLdbs.get(index);
 //				try {
 //					setExtreValue();
 //				} catch (SQLException e) {
@@ -374,7 +374,7 @@ public class ShowResultDlg extends Dialog {
 //					Text mintext = (Text) textItem.get(i).getMin();
 //					Text maxtext = (Text) textItem.get(i).getMax();
 //					
-//					ResultSet rs = sqldb.queryExtre(TABLE_COL_NAME[i]);
+//					ResultSet rs = SQLdb.queryExtre(TABLE_COL_NAME[i]);
 //					String min = rs.getString(1);
 //					String max = rs.getString(2);
 //					TableItem tim = conditionItem.get(i);
@@ -669,7 +669,7 @@ public class ShowResultDlg extends Dialog {
 			querySql = "(" + querySql + ")" ;
 		}
 		
-		rs = sqldb.query(querySql);
+		rs = SQLdb.query(querySql);
 		System.out.println("My sql query is:"+querySql);
 		return rs;
 	}
