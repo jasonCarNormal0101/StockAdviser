@@ -1,13 +1,13 @@
 package controller;
 
+import interfac.DBCatcher;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,9 +20,16 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 //import org.eclipse.ui.internal.handlers.WizardHandler.New;
@@ -35,174 +42,147 @@ import org.apache.http.protocol.HttpContext;
 
 //import controller.GetThread;
 
-public class DBCatcherOnX extends CatchStocksTodb {
+public class DBCatcherOnX implements DBCatcher {
+	protected static DefaultHttpClient httpClient;
+	private String source = "雪球";
+	private final String tableName = "xueqiu";
+
+	private String[] urlList;
+
+	// private String[] urlList;
+	private ArrayList<String> subData;
+	private String data;
+	private JSONArray dataArray;
+	ThreadFactory[] threads;
+	// 指标位置
+	private static final int[] INDEX = new int[] { 1, 2, 7, 6, 4, 3, 5 };
+
+	// 从result中抽取数据
+	private static final String EX = "\"symbol\":(.+?),.*?\"name\":(.+?),.*?"
+			+ "\"pettm\":(.+?),.*?\"pelyr\":(.+?),.*?"
+			+ "\"pb\":(.+?),.*?\"current\":(.+?),.*?\"pct\":(.+?),.*?";
 
 	private static final String URL = "http://xueqiu.com/stock/screener/screen.json"
 			+ "?category=SH&exchange=&areacode=&indcode=&orderby=symbol&order=desc"
 			+ "&size=300&page=2&current=ALL&pettm=ALL&pelyr=ALL&pb=ALL&pct=All";
 	private static final String GET_COOKIE_URL = "http://xueqiu.com/hq/screener";
 
-	private String[] urlList;
-	
-	public static final String CHARSET = "utf-8";
-	
-	//提取有效指标正则表达式
-	private static final String RE = "\"symbol\":(.+?),.*?\"name\":(.+?),.*?"
-			+  "\"pettm\":(.+?),.*?\"pelyr\":(.+?),.*?"
-			+ "\"pb\":(.+?),.*?\"current\":(.+?),.*?\"pct\":(.+?),.*?";
-	//指标顺序
-	private static final int[] INDEX = new int[]{1,2,7,6,4,3,5};
-
-	// private String[] urlList;
-	private ArrayList<String> subDataString;
-	private String dataString;
-	private JSONArray dataArray;
-	
-	private final String tableName = "xueqiu";
-	private String sourceName = "雪球";
-	
-	GetThread[] threads;
-	
 	public DBCatcherOnX() {
-		super();
-		// TODO Auto-generated constructor stub
+		createHttpClient();
 		dataArray = new JSONArray();
-//		execute();
 	}
 
 	@Override
 	public void catching() {
-		if(urlList == null){
+		if (urlList == null) {
 			urlList = getUrlList();
 		}
-		
-		if(subDataString == null){
-			subDataString = new ArrayList<String>();
+
+		if (subData == null) {
+			subData = new ArrayList<String>();
 		}
-		
+
 		getCookie(httpClient, GET_COOKIE_URL);
-		
-		multiThread();
-		
-		getDataString();
+
+		moreThreads();
+
 	}
 
 	@Override
-	public void update(){
+	public void update() {
 		Thread td = new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
-				
 				catching();
-				
-				for(GetThread gThread : threads){
+
+				for (ThreadFactory gThread : threads) {
 					try {
 						gThread.join();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
-				
+
 				try {
 					IOUtil.writer("data/xueqiu.json", dataArray.toString());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				getDataArray();
-				System.out.println("[雪球]数据更新完毕！" );
 			}
 		});
 		td.start();
 		try {
 			td.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	@Override
-	public void multiThread() {
-		// TODO Auto-generated method stub
 
-		// final String[] urisToGet = urlList();
-		threads = new GetThread[urlList.length];
+	@Override
+	public void moreThreads() {
+		threads = new ThreadFactory[urlList.length];
 		for (int i = 0; i < threads.length; i++) {
 			HttpGet httpget = new HttpGet(urlList[i]);
-			threads[i] = new GetThread(httpget);
+			threads[i] = new ThreadFactory(httpget);
 		}
-		// start the threads
 		for (int j = 0; j < threads.length; j++) {
 			threads[j].start();
 			try {
-				Thread.sleep(300);
+				Thread.sleep(400);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
-
+		getData();
 	}
-	
-	public String[] getUrlList(){
+
+	public String[] getUrlList() {
 		String[] arrStr = new String[10];
 		for (int i = 0; i < 10; ++i) {
 			arrStr[i] = URL + "&page=" + (i + 1);
 		}
 		return arrStr;
 	}
-	
-	/*
-     * 获取client cookie
-     */
-    public void getCookie(final HttpClient httpClient, String urlCookie) {
+
+	public void getCookie(final HttpClient client, String Cookie) {
 		HttpResponse response = null;
-		HttpGet hg = new HttpGet(urlCookie);
+		HttpGet getFromObject = new HttpGet(Cookie);
 		try {
-			response = httpClient.execute(hg);
+			response = client.execute(getFromObject);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			System.out.println("finally");
-			hg.releaseConnection();
+			getFromObject.releaseConnection();
 		}
-		CookieStore cookieStore = ((AbstractHttpClient) httpClient)
+		CookieStore cookieStore = ((AbstractHttpClient) client)
 				.getCookieStore();
-		((AbstractHttpClient) httpClient).setCookieStore(cookieStore);
+		((AbstractHttpClient) client).setCookieStore(cookieStore);
 	}
 
-	class GetThread extends Thread {
+	class ThreadFactory extends Thread {
 		private HttpGet httpget;
 		private HttpContext context;
-		
-		public GetThread(HttpGet httpget) {
+
+		public ThreadFactory(HttpGet httpget) {
 			this.context = new BasicHttpContext();
 			this.httpget = httpget;
 		}
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			get(httpget, context);
 		}
 	}
-	
+
 	public void get(HttpGet httpget, HttpContext context) {
 		try {
-			HttpResponse response = httpClient.execute(httpget,
-					context);
+			HttpResponse response = httpClient.execute(httpget, context);
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
 
 				String str = InputStream2String(entity, "utf-8");
-				subDataString.add(extractValidValue(str));
+				subData.add(extractValidValue(str));
 			}
-			// ensure the connection gets released to the manager
 			EntityUtils.consume(entity);
 		} catch (Exception ex) {
 			httpget.abort();
@@ -210,68 +190,100 @@ public class DBCatcherOnX extends CatchStocksTodb {
 			httpget.releaseConnection();
 		}
 	}
-	
-	public String extractValidValue(String data){
-		
-		Pattern pattern = Pattern.compile(RE);
+
+	public String extractValidValue(String data) {
+
+		Pattern pattern = Pattern.compile(EX);
 		Matcher matcher = pattern.matcher(data);
-		//替换第一个符合正则的数据
-		int count = 0;
+		int counter = 0;
 		StringBuilder sb = new StringBuilder();
-		while(matcher.find()){
+		while (matcher.find()) {
 			sb.append("[");
-			for(int i = 0; i < INDEX.length; ++i){
+			for (int i = 0; i < INDEX.length; ++i) {
 				sb.append(matcher.group(INDEX[i]) + ",");
 			}
 			sb.append(matcher.group(5) + ",");
 
 			sb.append("],");
-			++count;
+			++counter;
 		}
 		return sb.toString();
 	}
 
-	public String subData2DataString(){
+	public void createHttpClient() {
+		if (httpClient != null) {
+			return;
+		}
+		HttpParams params = new BasicHttpParams();
+		ConnManagerParams.setTimeout(params, 800);
+
+		HttpConnectionParams.setSoTimeout(params, 3000);
+		HttpConnectionParams.setConnectionTimeout(params, 1000);
+		SchemeRegistry sr = new SchemeRegistry();
+		sr.register(new Scheme("http", 80, PlainSocketFactory
+				.getSocketFactory()));
+
+		PoolingClientConnectionManager cm = new PoolingClientConnectionManager(
+				sr);
+		cm.setMaxTotal(20);
+		httpClient = new DefaultHttpClient(cm, params);
+	}
+
+	public static String InputStream2String(HttpEntity entity, String charset)
+			throws IOException {
+		if (entity == null) {
+			return null;
+		}
+		InputStream htmlConten = entity.getContent();
+		BufferedReader buff = new BufferedReader(new InputStreamReader(
+				htmlConten, charset));
+		StringBuilder res = new StringBuilder();
+		String line = "";
+		while ((line = buff.readLine()) != null) {
+			res.append(line);
+		}
+		return res.toString();
+	}
+
+	public String subData2DataString() {
 		StringBuilder str = new StringBuilder();
 		str.append("[");
-		for(String s : subDataString){
-			if(s == null){
+		for (String s : subData) {
+			if (s == null) {
 				continue;
 			}
 			str.append(s);
 		}
 		str.append("]");
-		dataString = str.toString();
+		data = str.toString();
 		try {
-			dataArray = new JSONArray(dataString);
+			dataArray = new JSONArray(data);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return dataString;
+		return data;
 	}
 
-	public String getDataString() {
-		if(dataString == null){
-			dataString = subData2DataString();
+	public String getData() {
+		if (data == null) {
+			data = subData2DataString();
 		}
-		return dataString;
+		return data;
 	}
 
 	@Override
 	public JSONArray getDataArray() {
-		getDataString();
-		if(dataArray == null){
+		getData();
+		if (dataArray == null) {
 			try {
-				dataArray = new JSONArray(dataString);
+				dataArray = new JSONArray(data);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		return dataArray;
 	}
-	
+
 	@Override
 	public String getTableName() {
 		return tableName;
@@ -279,14 +291,17 @@ public class DBCatcherOnX extends CatchStocksTodb {
 
 	@Override
 	public String getSourceName() {
-		return sourceName;
+		return source;
+	}
+
+	public static DefaultHttpClient getHttpClient() {
+		return httpClient;
 	}
 
 	@Override
-	public void setSourceName(String sourceName) {
-		this.sourceName = sourceName;
+	public void setSource(String sourceName) {
+		this.source = sourceName;
 	}
-
 
 	public static void main(String[] argv) {
 		final DBCatcherOnX xq = new DBCatcherOnX();

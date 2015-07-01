@@ -1,18 +1,32 @@
 package controller;
 
+import interfac.DBCatcher;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DBCatherOnT extends CatchStocksTodb {
-
+public class DBCatherOnT implements DBCatcher {
+	protected static DefaultHttpClient httpClient;
 	private String sourceName = "同花顺";
 	private final String tableName = "tonghuashun";
 	public static final String GET_PARAM_URL = "http://www.iwencai.com/stockpick/search"
@@ -26,12 +40,8 @@ public class DBCatherOnT extends CatchStocksTodb {
 	private JSONArray dataArray;
 
 	public DBCatherOnT() {
-		super();
-
-		// execute();
+		createHttpClient();
 	}
-
-
 
 	@Override
 	public void update() {
@@ -49,15 +59,17 @@ public class DBCatherOnT extends CatchStocksTodb {
 			e.printStackTrace();
 		}
 	}
+
 	@Override
 	public void catching() {
 		token = getToken();
 		url = getUrl();
 		dataArray = new JSONArray();
-		multiThread();
+		moreThreads();
 	}
+
 	@Override
-	public void multiThread() {
+	public void moreThreads() {
 		// TODO Auto-generated method stub
 		String str = getUrlString(url, "utf-8");
 		JSONObject jsonObj = null;
@@ -142,25 +154,42 @@ public class DBCatherOnT extends CatchStocksTodb {
 	}
 
 	@Override
-	public void setSourceName(String sourceName) {
+	public void setSource(String sourceName) {
 		this.sourceName = sourceName;
 	}
 
-	public static void main(String[] args) throws Exception {
-		String str1;
-		DBCatherOnT ths = new DBCatherOnT();
-		ths.update();
-		// ths.execute();
-		String str = ths.getDataArray().toString();
-		try {
-			IOUtil.writer("data/tonghuashun.json", str);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void createHttpClient() {
+		if (httpClient != null) {
+			return;
 		}
+		HttpParams params = new BasicHttpParams();
+		ConnManagerParams.setTimeout(params, 800);
+		HttpConnectionParams.setSoTimeout(params, 3000);
+		HttpConnectionParams.setConnectionTimeout(params, 1000);
+		SchemeRegistry sr = new SchemeRegistry();
+		sr.register(new Scheme("http", 80, PlainSocketFactory
+				.getSocketFactory()));
 
-		System.out.println("finish");
+		PoolingClientConnectionManager cm = new PoolingClientConnectionManager(
+				sr);
+		cm.setMaxTotal(20);
+		httpClient = new DefaultHttpClient(cm, params);
+	}
 
+	public static String InputStream2String(HttpEntity entity, String charset)
+			throws IOException {
+		if (entity == null) {
+			return null;
+		}
+		InputStream htmlConten = entity.getContent();
+		BufferedReader buff = new BufferedReader(new InputStreamReader(
+				htmlConten, charset));
+		StringBuilder res = new StringBuilder();
+		String line = "";
+		while ((line = buff.readLine()) != null) {
+			res.append(line);
+		}
+		return res.toString();
 	}
 
 }

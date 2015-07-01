@@ -1,5 +1,7 @@
 package controller;
 
+import interfac.DBCatcher;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,6 +13,8 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import mybase.DBbase;
+
 import org.apache.http.client.ClientProtocolException;
 //import org.eclipse.ui.Saveable;
 import org.json.JSONArray;
@@ -21,129 +25,42 @@ public class SqlDB{
 	public static final String[] TABLE_COL_NAME = 
 			new String[]{"pcRadio", "curPrice", "pe", "dynamicPE", "pb"};
 	
-	private CatchStocksTodb crawStocks;
-	private BaseDB singletonDB;
+	private DBCatcher crawer;
+	private DBbase DB;
+
+
+	private JSONArray stockJA;
+	private String tableName;
 	private Connection connection;
 	private Statement statement;
-	private JSONArray stockArray;
-	
-	private String tableName;
-	
-	//数据来源列表
-//	private ArrayList<CrawStocks> dataList;
-	
-	public SqlDB(CatchStocksTodb crawStocks){
-		singletonDB = BaseDB.Instance();
-		statement = singletonDB.getStatement();
-		connection = singletonDB.getConnection();
-		this.crawStocks = crawStocks;
+	public SqlDB(DBCatcher crawStocks){
+		DB = DBbase.Instance();
+		statement = DB.getStatement();
+		connection = DB.getConnection();
+		this.crawer = crawStocks;
 		
 		this.tableName = crawStocks.getTableName();
 		
-		createdbTable();
+		createTable();
 	}
 	
 	public void execute(){
-//		createdbTable();
-		crawStocks.catching();
-		this.stockArray = crawStocks.getDataArray();
-		this.tableName = crawStocks.getTableName();
-		
-//		createdbTable();
+		crawer.catching();
+		this.stockJA = crawer.getDataArray();
+		this.tableName = crawer.getTableName();
+
 		try {
 			insertData();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	public void update(){
 		
-		crawStocks.update();
-		
-//		JSONArray stocksArray_json = CrawStocksTongHuaShun.getStocksArray(ajaxStr);
-		this.stockArray = crawStocks.getDataArray();
-		dropTable();
-		createdbTable();
-		
-		try {
-			insertData();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	public Boolean executeSQL(String sql) throws SQLException{
-		return statement.execute(sql);
-		
-//		return false;
-	}
-	
-	//查找, conditionSql为查询条件
-	public ResultSet query(String conditionSql){
-		String querySql = "select * from " + tableName;
-		if(conditionSql != ""){
-			querySql += " where " + conditionSql;
-		}
-		ResultSet rs = null;
-		try {
-			rs = statement.executeQuery(querySql);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return rs;
-	}
+		crawer.update();
 
-	// 查找所有记录
-	public ResultSet query() {
-		String querySql = "select * from " + tableName;
-		ResultSet rs = null;
-		try {
-			rs = statement.executeQuery(querySql);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return rs;
-	}
-
-	// 查询极值
-	public ResultSet queryExtre(String colName) {
-		String sqlString = "select min("+colName+"),max("+colName+") from "+tableName;
-		ResultSet rs = null;
-		try {
-			rs = statement.executeQuery(sqlString);
-			rs.next();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return rs; 
-	}
-	
-	//创建表
-	public void createdbTable(){
-		try {
-			executeSQL(createTableSQL());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
-		}
-	}
-	
-	public String createTableSQL(){
-		String sql = "create table " + tableName 
-				+ "( code varchar(10), shortName varchar(50), "
-				+ "pcRadio float(4), curPrice float(4), "
-				+ "pe float(4), dynamicPE float(4), pb float(4))";
-		
-		return sql;
-	}
-	
-	//删除表
-	public void dropTable(){
+		this.stockJA = crawer.getDataArray();
 		try{
 			queryExtre("code");
 			executeSQL("drop table " + tableName);
@@ -153,8 +70,75 @@ public class SqlDB{
 			e.printStackTrace();
 		}
 		
+		createTable();
+		
+		try {
+			insertData();
+		} catch (JSONException e) {
+
+			e.printStackTrace();
+		}
+	}
+	public Boolean executeSQL(String sql) throws SQLException{
+		return statement.execute(sql);
+
 	}
 	
+	
+	public ResultSet query(String conditionSql){
+		String querySql = "select * from " + tableName;
+		if(conditionSql != ""){
+			querySql += " where " + conditionSql;
+		}
+		ResultSet rs = null;
+		try {
+			rs = statement.executeQuery(querySql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+
+	public ResultSet query() {
+		String querySql = "select * from " + tableName;
+		ResultSet rs = null;
+		try {
+			rs = statement.executeQuery(querySql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+
+	public ResultSet queryExtre(String colName) {
+		String sqlString = "select min("+colName+"),max("+colName+") from "+tableName;
+		ResultSet rs = null;
+		try {
+			rs = statement.executeQuery(sqlString);
+			rs.next();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return rs; 
+	}
+	
+	//创建表
+	public void createTable(){
+		try {
+			executeSQL(createTableSQL());
+		} catch (SQLException e) {
+		}
+	}
+	
+	public String createTableSQL(){
+		String sql = "create table " + tableName 
+				+ "( code varchar(15), shortName varchar(60), "
+				+ "pcRadio float(2), curPrice float(2), "
+				+ "pe float(2), dynamicPE float(2), pb float(2))";
+		
+		return sql;
+	}
+
 	
 	public void insert(String valueSql){
 		try {
@@ -198,15 +182,14 @@ public class SqlDB{
 	}
 	
 	public void insertData() throws JSONException{
-		int len = stockArray.length();
+		int len = stockJA.length();
 		for(int i = 0; i < len; ++i){
-			JSONArray ja = stockArray.getJSONArray(i);
+			JSONArray ja = stockJA.getJSONArray(i);
 			insert(ja);
 		}
 		try {
 			connection.commit();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -214,14 +197,12 @@ public class SqlDB{
 	public int getCount(){
 		int count = 0;
 		try {
-			ResultSet rs = query();
-//			
+			ResultSet rs = query();	
 			while(rs.next()){
 				count++;
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -230,7 +211,6 @@ public class SqlDB{
 	
 	public void shutdow(){
 		
-		System.out.println("Closedresultsetandstatement");
 		try {
 			statement.close();
 			connection.commit();
@@ -254,19 +234,6 @@ public class SqlDB{
 	}
 
 	public JSONArray getStockArray() {
-		return stockArray;
-	}
-
-	public static void main(String[] argv) 
-			throws ClientProtocolException, IOException, SQLException{
-//		CrawStocksTongHuaShun ths = new CrawStocksTongHuaShun();
-		DBCatcherOnX xq = new DBCatcherOnX();
-		System.out.println("xueqiu");
-//		SQLdb thsSql = new SQLdb(ths);
-//		thsSql.update();
-//		thsSql.execute();
-		
-		SqlDB xqSql = new SqlDB(xq);
-		xqSql.update();
+		return stockJA;
 	}
 }

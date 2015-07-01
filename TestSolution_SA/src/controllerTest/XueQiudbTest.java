@@ -4,6 +4,7 @@ package controllerTest;
 //import static org.hamcrest.Matchers.greaterThan;
 //import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
+import interfac.DBCatcher;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +14,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import controller.DBCatcherOnX;
-import controller.CatchStocksTodb;
 import controller.DBCatherOnT;
 
 public class XueQiudbTest extends SQLdbTest {
@@ -22,7 +22,7 @@ public class XueQiudbTest extends SQLdbTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		CatchStocksTodb xueqiu = new DBCatcherOnX();
+		DBCatcher xueqiu = new DBCatcherOnX();
 		SQLdbTest.BeforeClass(xueqiu);
 	}
 
