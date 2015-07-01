@@ -37,10 +37,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import controller.CollectionSL;
-import controller.CatchXueQiuTodb;
-import controller.CatchTongHuaShunTodb;
-import controller.SQLdb;
+import controller.DBCatcherOnX;
+import controller.DBCatherOnT;
+import controller.SqlDB;
 
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
@@ -52,7 +51,7 @@ public class ShowResultDlg extends Dialog {
 	private Table stockListTable;
 	private Shell parentShell;
 	private Shell _shell;
-	private SQLdb SQLdb;
+	private SqlDB SQLdb;
 	private Composite stockListComposite;
 	private Composite optionComposite;
 	private Composite topComposite;
@@ -82,17 +81,17 @@ public class ShowResultDlg extends Dialog {
 	private ArrayList<TableEditor> minEditorItem;
 	private ArrayList<TableEditor> maxEditortem;
 //	private ArrayList<Condition> textItem;
-	private CollectionSL collectCondCtrl;
+
 //	private ArrayList<CollectCondition> collCompArray;
 	private static final String[] HEADER = new String[] { "序号", "股票代码", "股票简称",
 			"涨跌幅(%)", "现价(元)", "市盈率(pe)", "动态市盈率", "市净率" };
 	private static final int[] HEADER_SIZE = new int[] { 55, 90, 75, 75, 70,
 			100, 85, 75 };
 	public static final String[] TABLE_COL_NAME = 
-			new String[]{"priceChangeRatio", "curPrice", "pe", "dynamicPE", "pb"};
+			new String[]{"pcRadio", "curPrice", "pe", "dynamicPE", "pb"};
 	private static final String[] CHOICE_CONDITION = new String[] { "涨跌幅(%)",
 		"现价(元)", "市盈率(pe)", "动态市盈率", "市净率" };
-	public ShowResultDlg(Shell parent, FilterConditions filterConditions,SQLdb SQLdb) {
+	public ShowResultDlg(Shell parent, FilterConditions filterConditions,SqlDB SQLdb) {
 		super(parent, SWT.NONE);
 		parentShell = getParent();
 		_filterConditions = filterConditions;
@@ -229,8 +228,8 @@ public class ShowResultDlg extends Dialog {
 			sourceNames = new ArrayList<String>();
 		}
 		
-		CatchTongHuaShunTodb ths = new CatchTongHuaShunTodb();
-		CatchXueQiuTodb xueqiu = new CatchXueQiuTodb();
+		DBCatherOnT ths = new DBCatherOnT();
+		DBCatcherOnX xueqiu = new DBCatcherOnX();
 		
 //		SQLdbs.add(new SQLdb(ths));
 //		SQLdbs.add(new SQLdb(xueqiu));

@@ -42,7 +42,7 @@ public abstract class CatchStocksTodb {
 	abstract public void multiThread();
 	abstract public JSONArray getDataArray();
 	
-	abstract public void execute();
+	abstract public void catching();
 	abstract void update();
 	
 	abstract public String getTableName();

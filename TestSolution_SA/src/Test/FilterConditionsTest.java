@@ -23,7 +23,7 @@ public class FilterConditionsTest {
 	public void FilterConditionsFindTest() {
 		FilterConditions f = new FilterConditions();
 		Filter f1 = new Filter("涨跌幅",">",10);
-		assertEquals("priceChangeRatio", f1.getRealName());
+		assertEquals("pcRadio", f1.getRealName());
 		f.addFilter(f1);
 		assertEquals(f1, f.findFilter("涨跌幅", ">"));
 		assertEquals(null, f.findFilter("涨跌幅", "<"));

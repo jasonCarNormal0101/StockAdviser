@@ -13,12 +13,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import controller.CatchStocksTodb;
-import controller.CatchTongHuaShunTodb;
-import controller.SQLdb;
+import controller.DBCatherOnT;
+import controller.SqlDB;
 
 abstract public class SQLdbTest {
 	
-	private  static SQLdb SQLdb;
+	private  static SqlDB SQLdb;
 
 	public SQLdbTest() {
 		// TODO Auto-generated constructor stub
@@ -28,7 +28,7 @@ abstract public class SQLdbTest {
 	public static void BeforeClass(CatchStocksTodb crawStocks) 
 			throws Exception {
 		
-		SQLdb = new SQLdb(new CatchTongHuaShunTodb());
+		SQLdb = new SqlDB(new DBCatherOnT());
 		SQLdb.execute();
 //		SQLdb.createdbTable();
 //		System.out.println(SQLdb.getCount());
@@ -64,8 +64,8 @@ abstract public class SQLdbTest {
 		extenValue("pe");
 	}
 	//测试涨跌幅极值
-	public static void extenOf_priceChangeRatio(){
-		extenValue("priceChangeRatio");
+	public static void extenOf_pcRadio(){
+		extenValue("pcRadio");
 	}
 	//测试现价极值
 	public static void extenOf_curPrice(){
@@ -107,9 +107,9 @@ abstract public class SQLdbTest {
 		}
 	}
 	//测试涨跌幅查询的结果
-	public static void resultOf_priceChangeRatio(){
+	public static void resultOf_pcRadio(){
 		try {
-			result("priceChangeRatio", -10.0, 20.0);
+			result("pcRadio", -10.0, 20.0);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

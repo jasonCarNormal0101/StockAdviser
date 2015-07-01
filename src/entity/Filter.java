@@ -8,7 +8,7 @@ import org.json.JSONObject;
 public class Filter {
 
 	public static final String[] TABLE_COL_NAME = new String[] {
-			"priceChangeRatio", "curPrice", "pe", "dynamicPE", "pb" };
+			"pcRadio", "curPrice", "pe", "dynamicPE", "pb" };
 	private static final String[] HEADER = new String[] { "涨跌幅", "现价",
 			"市盈率", "预测市盈率", "市净率" };
 	private String _name;

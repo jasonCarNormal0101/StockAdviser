@@ -12,9 +12,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import controller.CatchXueQiuTodb;
+import controller.DBCatcherOnX;
 import controller.CatchStocksTodb;
-import controller.CatchTongHuaShunTodb;
+import controller.DBCatherOnT;
 
 public class XueQiudbTest extends SQLdbTest {
 
@@ -22,7 +22,7 @@ public class XueQiudbTest extends SQLdbTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		CatchStocksTodb xueqiu = new CatchXueQiuTodb();
+		CatchStocksTodb xueqiu = new DBCatcherOnX();
 		SQLdbTest.BeforeClass(xueqiu);
 	}
 
@@ -52,8 +52,8 @@ public class XueQiudbTest extends SQLdbTest {
 
 	@Test
 	// 测试涨跌幅极值
-	public void testExtenOf_priceChangeRatio() {
-		SQLdbTest.extenOf_priceChangeRatio();
+	public void testExtenOf_pcRadio() {
+		SQLdbTest.extenOf_pcRadio();
 	}
 
 	@Test
@@ -82,8 +82,8 @@ public class XueQiudbTest extends SQLdbTest {
 
 	@Test
 	// 测试涨跌幅查询的结果
-	public void testResultOf_priceChangeRatio() {
-		SQLdbTest.resultOf_priceChangeRatio();
+	public void testResultOf_pcRadio() {
+		SQLdbTest.resultOf_pcRadio();
 	}
 
 	@Test

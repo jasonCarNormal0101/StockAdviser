@@ -1,73 +1,44 @@
 package controller;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.math.IntRange;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.*;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import controller.CatchXueQiuTodb.GetThread;
+public class DBCatherOnT extends CatchStocksTodb {
 
-public class CatchTongHuaShunTodb extends CatchStocksTodb{
-	public static final String CHARSET = "utf-8";
-	public static final String GET_PARAM_URL = 
-			"http://www.iwencai.com/stockpick/search"
+	private String sourceName = "同花顺";
+	private final String tableName = "tonghuashun";
+	public static final String GET_PARAM_URL = "http://www.iwencai.com/stockpick/search"
 			+ "?typed=0&preParams=&ts=1&f=1&qs=1&selfsectsn="
 			+ "&querytype=&searchfilter=&tid=stockpick&w=pe";
-	public static final String URL_BASE_AJAX = 
-			"http://www.iwencai.com/stockpick";
-	
-	private String url;
-	private JSONArray dataArray;
+	public static final String URL_BASE_AJAX = "http://www.iwencai.com/stockpick";
+
 	private int total;
 	private String token;
-	
-	private final String tableName = "tonghuashun";
-	private String sourceName = "同花顺";
-	
-	public CatchTongHuaShunTodb(){
+	private String url;
+	private JSONArray dataArray;
+
+	public DBCatherOnT() {
 		super();
-		
-//		execute();
+
+		// execute();
 	}
 
+
+
 	@Override
-	public void execute() {
-		token = getToken();
-		url = getUrl();
-		dataArray = new JSONArray();
-		multiThread();
-	}
-	
-	@Override
-	public void update(){
-//		CrawStocksTongHuaShun ths = new CrawStocksTongHuaShun(name);
+	public void update() {
 		Thread td = new Thread(new Runnable() {
-			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
-				execute();
-				System.out.println("[同花顺]数据更新完成！");
+				catching();
 			}
 		});
 		td.start();
@@ -78,11 +49,17 @@ public class CatchTongHuaShunTodb extends CatchStocksTodb{
 			e.printStackTrace();
 		}
 	}
-	
+	@Override
+	public void catching() {
+		token = getToken();
+		url = getUrl();
+		dataArray = new JSONArray();
+		multiThread();
+	}
 	@Override
 	public void multiThread() {
 		// TODO Auto-generated method stub
-		String str = getUrlString(url, CHARSET);
+		String str = getUrlString(url, "utf-8");
 		JSONObject jsonObj = null;
 		try {
 			jsonObj = new JSONObject(str);
@@ -109,36 +86,36 @@ public class CatchTongHuaShunTodb extends CatchStocksTodb{
 
 	public String getToken() {
 		String token = null;
-		String htmlStr = getUrlString(GET_PARAM_URL, CHARSET);
-		//正则表达式处理HTML DOM，提取json对象的字符串
+		String htmlStr = getUrlString(GET_PARAM_URL, "utf-8");
+		// 正则表达式处理HTML DOM，提取json对象的字符串
 		Pattern pattern = Pattern.compile("var allResult = (.*)?;");
 		Matcher matcher = pattern.matcher(htmlStr);
 		if (matcher.find()) {
 			String ret = matcher.group(1);
 			JSONObject jsonObj;
 			try {
-				jsonObj = new JSONObject(ret);//字符串转成json对象
+				jsonObj = new JSONObject(ret);// 字符串转成json对象
 				token = jsonObj.getString("token");
 				total = jsonObj.getInt("total");
-				
+
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-//		this.token = token;
+		// this.token = token;
 		return token;
 	}
-	
-	private String getUrlString(String url, String charset){
+
+	private String getUrlString(String url, String charset) {
 		String htmlStr = null;
 		HttpGet hg = new HttpGet(url);
 		try {
 			HttpResponse response = httpClient.execute(hg);
 			HttpEntity entity = response.getEntity();
 			htmlStr = InputStream2String(entity, charset);
-			
-//			return htmlStr;
+
+			// return htmlStr;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -171,19 +148,19 @@ public class CatchTongHuaShunTodb extends CatchStocksTodb{
 
 	public static void main(String[] args) throws Exception {
 		String str1;
-		CatchTongHuaShunTodb ths = new CatchTongHuaShunTodb();
+		DBCatherOnT ths = new DBCatherOnT();
 		ths.update();
-//		ths.execute();
+		// ths.execute();
 		String str = ths.getDataArray().toString();
-		 try {
-			IORW.write("data/tonghuashun.json", str);
+		try {
+			IOUtil.writer("data/tonghuashun.json", str);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 
+
 		System.out.println("finish");
 
 	}
-	
+
 }

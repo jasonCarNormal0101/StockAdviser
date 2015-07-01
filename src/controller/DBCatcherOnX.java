@@ -35,7 +35,7 @@ import org.apache.http.protocol.HttpContext;
 
 //import controller.GetThread;
 
-public class CatchXueQiuTodb extends CatchStocksTodb {
+public class DBCatcherOnX extends CatchStocksTodb {
 
 	private static final String URL = "http://xueqiu.com/stock/screener/screen.json"
 			+ "?category=SH&exchange=&areacode=&indcode=&orderby=symbol&order=desc"
@@ -63,7 +63,7 @@ public class CatchXueQiuTodb extends CatchStocksTodb {
 	
 	GetThread[] threads;
 	
-	public CatchXueQiuTodb() {
+	public DBCatcherOnX() {
 		super();
 		// TODO Auto-generated constructor stub
 		dataArray = new JSONArray();
@@ -71,7 +71,7 @@ public class CatchXueQiuTodb extends CatchStocksTodb {
 	}
 
 	@Override
-	public void execute() {
+	public void catching() {
 		if(urlList == null){
 			urlList = getUrlList();
 		}
@@ -95,7 +95,7 @@ public class CatchXueQiuTodb extends CatchStocksTodb {
 			public void run() {
 				// TODO Auto-generated method stub
 				
-				execute();
+				catching();
 				
 				for(GetThread gThread : threads){
 					try {
@@ -107,7 +107,7 @@ public class CatchXueQiuTodb extends CatchStocksTodb {
 				}
 				
 				try {
-					IORW.write("data/xueqiu.json", dataArray.toString());
+					IOUtil.writer("data/xueqiu.json", dataArray.toString());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -289,7 +289,7 @@ public class CatchXueQiuTodb extends CatchStocksTodb {
 
 
 	public static void main(String[] argv) {
-		final CatchXueQiuTodb xq = new CatchXueQiuTodb();
+		final DBCatcherOnX xq = new DBCatcherOnX();
 		xq.update();
 	}
 

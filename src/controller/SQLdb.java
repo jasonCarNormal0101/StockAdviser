@@ -16,10 +16,10 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class SQLdb{
+public class SqlDB{
 	
 	public static final String[] TABLE_COL_NAME = 
-			new String[]{"priceChangeRatio", "curPrice", "pe", "dynamicPE", "pb"};
+			new String[]{"pcRadio", "curPrice", "pe", "dynamicPE", "pb"};
 	
 	private CatchStocksTodb crawStocks;
 	private BaseDB singletonDB;
@@ -32,7 +32,7 @@ public class SQLdb{
 	//数据来源列表
 //	private ArrayList<CrawStocks> dataList;
 	
-	public SQLdb(CatchStocksTodb crawStocks){
+	public SqlDB(CatchStocksTodb crawStocks){
 		singletonDB = BaseDB.Instance();
 		statement = singletonDB.getStatement();
 		connection = singletonDB.getConnection();
@@ -45,7 +45,7 @@ public class SQLdb{
 	
 	public void execute(){
 //		createdbTable();
-		crawStocks.execute();
+		crawStocks.catching();
 		this.stockArray = crawStocks.getDataArray();
 		this.tableName = crawStocks.getTableName();
 		
@@ -136,7 +136,7 @@ public class SQLdb{
 	public String createTableSQL(){
 		String sql = "create table " + tableName 
 				+ "( code varchar(10), shortName varchar(50), "
-				+ "priceChangeRatio float(4), curPrice float(4), "
+				+ "pcRadio float(4), curPrice float(4), "
 				+ "pe float(4), dynamicPE float(4), pb float(4))";
 		
 		return sql;
@@ -260,13 +260,13 @@ public class SQLdb{
 	public static void main(String[] argv) 
 			throws ClientProtocolException, IOException, SQLException{
 //		CrawStocksTongHuaShun ths = new CrawStocksTongHuaShun();
-		CatchXueQiuTodb xq = new CatchXueQiuTodb();
+		DBCatcherOnX xq = new DBCatcherOnX();
 		System.out.println("xueqiu");
 //		SQLdb thsSql = new SQLdb(ths);
 //		thsSql.update();
 //		thsSql.execute();
 		
-		SQLdb xqSql = new SQLdb(xq);
+		SqlDB xqSql = new SqlDB(xq);
 		xqSql.update();
 	}
 }

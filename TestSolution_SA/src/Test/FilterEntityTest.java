@@ -11,7 +11,7 @@ public class FilterEntityTest {
 	@Test
 	public void FilterCreateTest() {
 		Filter f1 = new Filter("涨跌幅",">",10);
-		assertEquals("priceChangeRatio", f1.getRealName());
+		assertEquals("pcRadio", f1.getRealName());
 		Filter f2 = new Filter("现价",">",10);
 		assertEquals("curPrice", f2.getRealName());
 		Filter f3 = new Filter("市盈率",">",10);
