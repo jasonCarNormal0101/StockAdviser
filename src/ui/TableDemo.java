@@ -14,10 +14,10 @@ import javax.swing.table.AbstractTableModel;
 
 import org.eclipse.swt.widgets.Display;
 
+import controller.GetSelectedShares;
+import controller.Share;
 import util.RefreshMethod;
 import util.RefreshTask;
-import Connect.GetSelectedShares;
-import Connect.Share;
 import entity.FilterConditions;
 
 import java.awt.Dimension;

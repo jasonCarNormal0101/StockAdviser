@@ -1,4 +1,4 @@
-package Connect;
+package controller;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

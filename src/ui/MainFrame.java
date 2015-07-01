@@ -15,13 +15,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import Connect.GetNewUri;
-
 import com.sun.swing.internal.plaf.basic.resources.basic;
 import com.sun.xml.internal.ws.wsdl.writer.document.OpenAtts;
 
 import controller.DBCatcherOnX;
 import controller.DBCatherOnT;
+import controller.GetNewUri;
 import controller.SqlDB;
 import entity.CollectionTable;
 import entity.Filter;

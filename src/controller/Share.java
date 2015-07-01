@@ -1,4 +1,4 @@
-package Connect;
+package controller;
 
 public class Share {
 	private int shareCode;

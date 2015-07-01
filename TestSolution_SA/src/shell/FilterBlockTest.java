@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
-import Connect.GetSelectedShares;
+import controller.GetSelectedShares;
 import entity.CollectionTable;
 import entity.Filter;
 import entity.FilterConditions;
@@ -36,53 +36,53 @@ public class FilterBlockTest extends AbsMainFrame {
 
 	public void InitToTenFilter() {
 		InitToNullFilter();
-		filterList.addFilter(new Filter("ÕÇµø·ù", ">", 3));
-		filterList.addFilter(new Filter("ÕÇµø·ù", "<", 5));
-		filterList.addFilter(new Filter("ÏÖ¼Û", "<", 30));
-		filterList.addFilter(new Filter("ÏÖ¼Û", ">", 10));
-		filterList.addFilter(new Filter("ÊÐÓ¯ÂÊ", ">", 0));
-		filterList.addFilter(new Filter("ÊÐÓ¯ÂÊ", "<", 10));
-		filterList.addFilter(new Filter("Ô¤²âÊÐÓ¯ÂÊ", ">", 0));
-		filterList.addFilter(new Filter("Ô¤²âÊÐÓ¯ÂÊ", "<", 10));
-		filterList.addFilter(new Filter("ÊÐ¾»ÂÊ", ">", 0));
-		filterList.addFilter(new Filter("ÊÐ¾»ÂÊ", "<", 10));
+		filterList.addFilter(new Filter("ï¿½Çµï¿½ï¿½", ">", 3));
+		filterList.addFilter(new Filter("ï¿½Çµï¿½ï¿½", "<", 5));
+		filterList.addFilter(new Filter("ï¿½Ö¼ï¿½", "<", 30));
+		filterList.addFilter(new Filter("ï¿½Ö¼ï¿½", ">", 10));
+		filterList.addFilter(new Filter("ï¿½ï¿½Ó¯ï¿½ï¿½", ">", 0));
+		filterList.addFilter(new Filter("ï¿½ï¿½Ó¯ï¿½ï¿½", "<", 10));
+		filterList.addFilter(new Filter("Ô¤ï¿½ï¿½ï¿½ï¿½Ó¯ï¿½ï¿½", ">", 0));
+		filterList.addFilter(new Filter("Ô¤ï¿½ï¿½ï¿½ï¿½Ó¯ï¿½ï¿½", "<", 10));
+		filterList.addFilter(new Filter("ï¿½Ð¾ï¿½ï¿½ï¿½", ">", 0));
+		filterList.addFilter(new Filter("ï¿½Ð¾ï¿½ï¿½ï¿½", "<", 10));
 	}
 
 	public void InitToTwelveFilter() {
 		InitToTenFilter();
-		filterList.addFilter(new Filter("×Ü¹É±¾", ">", 0));
-		filterList.addFilter(new Filter("×Ü¹É±¾", "<", 10));
+		filterList.addFilter(new Filter("ï¿½Ü¹É±ï¿½", ">", 0));
+		filterList.addFilter(new Filter("ï¿½Ü¹É±ï¿½", "<", 10));
 	}
 //	private final static CyclicBarrier swtBarrier2 = new CyclicBarrier(2);
 	/*
-	 * ²âÊÔÊÕ²Ø°´Å¥
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½Õ²Ø°ï¿½Å¥
 	 */
 	@Test
 	public void collectFilterTest() throws InterruptedException, BrokenBarrierException {
 		InitToNullFilter();
 		
-		bot.button("ÊÕ²Ø").click();
-		bot.shell("ÃüÃûÊÕ²Ø").activate();
+		bot.button("ï¿½Õ²ï¿½").click();
+		bot.shell("ï¿½ï¿½ï¿½ï¿½ï¿½Õ²ï¿½").activate();
 		bot.activeShell().close();
-		// ¼ì²âÊÇ·ñ¸üÐÂÁËÏÂÀ­²Ëµ¥
-		getInstance().saveCollectionAndRefresh("¿ÕÊÕ²Ø", filterList);
+		// ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½
+		getInstance().saveCollectionAndRefresh("ï¿½ï¿½ï¿½Õ²ï¿½", filterList);
 		String[] item=bot.comboBox(0).items();
 		System.out.println("item="+item[0]);
 		int index=-1;
 		for (int i = 0; i < item.length; i++) {
-			if (item[i].equals("¿ÕÊÕ²Ø")) {
+			if (item[i].equals("ï¿½ï¿½ï¿½Õ²ï¿½")) {
 				index=i;
 				break;
 			}
 		}
 		assertNotEquals(index, -1);
-//		//Ñ¡ÔñÐÂÔöµÄÌõÄ¿²¢¼ì²éµã»÷
+//		//Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //		bot.comboBoxInGroup(" ").setSelection(index);
-//		assertEquals("¿ÕÊÕ²Ø",bot.comboBoxInGroup(" ").getText());
+//		assertEquals("ï¿½ï¿½ï¿½Õ²ï¿½",bot.comboBoxInGroup(" ").getText());
 //		InitToTenFilter();
-//		bot.button("ÊÕ²Ø");
+//		bot.button("ï¿½Õ²ï¿½");
 //		InitToTwelveFilter();
-//		bot.button("ÊÕ²Ø");
+//		bot.button("ï¿½Õ²ï¿½");
 
 	}
    @Test
@@ -90,11 +90,11 @@ public class FilterBlockTest extends AbsMainFrame {
 	   
    }
 	private void assertOneFilterUi(Filter filter, int index) {
-		assertEquals(filter.get_name(), bot.labelInGroup("¹ýÂËÆ÷", 3 * index)
+		assertEquals(filter.get_name(), bot.labelInGroup("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", 3 * index)
 				.getId());
 		assertEquals(filter.get_sign() + filter.get_Value(),
-				bot.labelInGroup("¹ýÂËÆ÷", 3 * index + 1).getText());
-		assertEquals("É¾³ý", bot.labelInGroup("¹ýÂËÆ÷", 3 * index + 2).getText());
+				bot.labelInGroup("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", 3 * index + 1).getText());
+		assertEquals("É¾ï¿½ï¿½", bot.labelInGroup("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", 3 * index + 2).getText());
 	}
 
 	private void assertFilterBlock(FilterConditions _filterList) {
@@ -106,35 +106,35 @@ public class FilterBlockTest extends AbsMainFrame {
 	}
 
 	/*
-	 * ²âÊÔ¸üÐÂFilterBlockµÄui
+	 * ï¿½ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½FilterBlockï¿½ï¿½ui
 	 */
 	@Test
 	public void updateFilterComponentTest() {
-		// NullµÄÊ±ºò
+		// Nullï¿½ï¿½Ê±ï¿½ï¿½
 		InitToNullFilter();
 		getInstance().getFilterBlock().updateFilterComponent(filterList);
 		assertFilterBlock(filterList);
-		// ÁÙ½ç×ª»»ÎªScrollPaneµÄÊ±ºò
+		// ï¿½Ù½ï¿½×ªï¿½ï¿½ÎªScrollPaneï¿½ï¿½Ê±ï¿½ï¿½
 		InitToTenFilter();
 		getInstance().getFilterBlock().updateFilterComponent(filterList);
-		// Ó¦¸Ã×ª»»ÎªScrollPaneµÄÊ±ºò
+		// Ó¦ï¿½ï¿½×ªï¿½ï¿½ÎªScrollPaneï¿½ï¿½Ê±ï¿½ï¿½
 		InitToTwelveFilter();
 		getInstance().getFilterBlock().updateFilterComponent(filterList);
 
 		// SWTBotButton addButton=bot.button("+");
 		// addButton.click();
-		// SWTBotShell shell=bot.shell("ÕÇµø·ù");
+		// SWTBotShell shell=bot.shell("ï¿½Çµï¿½ï¿½");
 		// shell.activate();
 		// // System.out.println(bot.activeShell().getText());
-		// // bot.label("ÕÇµø·ù:");
+		// // bot.label("ï¿½Çµï¿½ï¿½:");
 		// // SWTBotButton goButton=bot.button("GO");
 		// // goButton.click();
 		// bot.
-		// SWTBotButton confirmButton=bot.button("È·¶¨");
+		// SWTBotButton confirmButton=bot.button("È·ï¿½ï¿½");
 		// confirmButton.click();
-		// bot.textWithTooltip("¸ñÊ½Îª:±È½Ï·û¼ÓÊýÖµ") .setText("<6");
+		// bot.textWithTooltip("ï¿½ï¿½Ê½Îª:ï¿½È½Ï·ï¿½ï¿½ï¿½ï¿½Öµ") .setText("<6");
 		//
-		// SWTBotShell mainframe=bot.shell("Ñ¡¹ÉÆ÷");
+		// SWTBotShell mainframe=bot.shell("Ñ¡ï¿½ï¿½ï¿½ï¿½");
 		// mainframe.activate();
 
 	}
